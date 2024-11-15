@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="page">
+    <ActionBar class="action-bar">
+        <NavigationButton android.systemIcon="ic_menu_back" />
+        <ActionBar.title>
+            <GridLayout columns="*, auto">
+                <Label col="0" text="{{ club.name }}" class="action-bar-title" textWrap="true" />
+                <Button col="1" 
+                        text="⋮" 
+                        tap="{{ onShowOptions }}"
+                        class="options-button"
+                        visibility="{{ isAdmin ? 'visible' : 'collapsed' }}" />
+            </GridLayout>
+        </ActionBar.title>
+    </ActionBar>
+
+    <GridLayout rows="auto, *">
+        <!-- Club Header -->
+        <StackLayout row="0" class="club-header">
+            <GridLayout columns="auto, *" class="club-info">
+                <Image src="{{ club.coverImage || '~/assets/images/club-placeholder.png' }}"
+                       width="80" height="80"
+                       class="club-image"
+                       col="0" />
+                <StackLayout col="1" class="club-details">
+                    <Label text="{{ club.description }}" 
+                           class="club-description"
+                           textWrap="true" />
+                    <WrapLayout class="tags-container">
+                        <Repeater items="{{ club.tags }}">
+                            <Repeater.itemTemplate>
+                                <Label text="{{ $value }}" class="tag" />
+                            </Repeater.itemTemplate>
+                        </Repeater>
+                    </WrapLayout>
+                    <GridLayout columns="auto, auto, auto" class="stats-container">
+                        <Label text="{{ club.stats.totalMembers + ' members' }}" 
+                               class="stat"
+                               col="0" />
+                        <Label text="{{ club.stats.booksRead + ' books read' }}" 
+                               class="stat"
+                               col="1" />
+                        <Label text="{{ club.stats.activeDiscussions + ' discussions' }}" 
+                               class="stat"
+                               col="2" />
+                    </GridLayout>
+                </StackLayout>
+            </GridLayout>
+        </StackLayout>
+
+        <!-- Content Tabs -->
+        <TabView row="1" 
+                selectedIndex="{{ selectedTabIndex }}"
+                class="content-tabs">
+            <!-- Currently Reading Tab -->
+            <TabViewItem title="Reading">
+                <ScrollView>
+                    <StackLayout class="tab-content">
+                        <!-- Current Book -->
+                        <GridLayout rows="auto" columns="auto, *" 
+                                  class="current-book"
+                                  visibility="{{ currentBook ? 'visible' : 'collapsed' }}">
+                            <Image src="{{ currentBook.imageLinks.thumbnail }}" 
+                                   width="60" height="90"
+                                   class="book-cover"
+                                   col="0" />
+                            <StackLayout col="1" class="book-info">
+                                <Label text="{{ currentBook.title }}" class="book-title" />
+                                <Label text="{{ currentBook.authors.join(', ') }}" class="book-author" />
+                                <GridLayout rows="auto" columns="*, auto" class="progress-info">
+                                    <Progress value="{{ readingProgress }}" 
+                                             maxValue="100" 
+                                             class="reading-progress-bar"
+                                             col="0" />
+                                    <Label text="{{ readingProgress + '%' }}" 
+                                           class="progress-text"
+                                           col="1" />
+                                </GridLayout>
+                            </StackLayout>
+                        </GridLayout>
+
+                        <!-- Reading Schedule -->
+                        <ListView items="{{ readingSchedule.milestones }}"
+                                 class="milestones-list"
+                                 visibility="{{ readingSchedule ? 'visible' : 'collapsed' }}">
+                            <ListView.itemTemplate>
+                                <GridLayout columns="auto, *, auto" class="milestone-item">
+                                    <Label text="{{ completed ? '✓' : '○' }}"
+                                           class="{{ completed ? 'milestone-complete' : 'milestone-incomplete' }}"
+                                           col="0" />
+                                    <StackLayout col="1">
+                                        <Label text="{{ title }}" class="milestone-title" />
+                                        <Label text="{{ description }}" 
+                                               class="milestone-description"
+                                               visibility="{{ description ? 'visible' : 'collapsed' }}" />
+                                        <Label text="{{ targetDate }}" class="milestone-date" />
+                                    </StackLayout>
+                                    <Label text="{{ targetProgress + '%' }}"
+                                           class="milestone-progress"
+                                           col="2" />
+                                </GridLayout>
+                            </ListView.itemTemplate>
+                        </ListView>
+
+                        <!-- Empty State -->
+                        <StackLayout visibility="{{ !currentBook ? 'visible' : 'collapsed' }}"
+                                   class="empty-state">
+                            <Label text="📚" class="empty-icon" />
+                            <Label text="No book selected for reading" class="empty-message" />
+                            <Button text="Select Book" 
+                                    tap="{{ onSelectBook }}"
+                                    class="action-button"
+                                    visibility="{{ isAdmin ? 'visible' : 'collapsed' }}" />
+                        </StackLayout>
+                    </StackLayout>
+                </ScrollView>
+            </TabViewItem>
+
+            <!-- Discussions Tab -->
+            <TabViewItem title="Discussions">
+                <GridLayout rows="auto, *">
+                    <Button text="New Discussion" 
+                            tap="{{ onNewDiscussion }}"
+                            class="new-discussion-button"
+                            row="0" />
+                    <ListView items="{{ discussions }}"
+                             itemTap="{{ onDiscussionTap }}"
+                             row="1"
+                             class="discussions-list">
+                        <ListView.itemTemplate>
+                            <GridLayout rows="auto, auto, auto" class="discussion-item">
+                                <GridLayout columns="*, auto" row="0">
+                                    <Label text="{{ title }}" 
+                                           class="discussion-title"
+                                           col="0" />
+                                    <Label text="{{ isPinned ? '📌' : '' }}"
+                                           class="pin-icon"
+                                           col="1" />
+                                </GridLayout>
+                                <Label text="{{ content }}" 
+                                       textWrap="true"
+                                       class="discussion-preview"
+                                       row="1" />
+                                <GridLayout columns="auto, auto, *, auto" 
+                                          class="discussion-meta"
+                                          row="2">
+                                    <Label text="{{ '❤️ ' + likes }}" col="0" class="meta-item" />
+                                    <Label text="{{ '💬 ' + replies.length }}" col="1" class="meta-item" />
+                                    <Label text="{{ createdAt }}" col="2" class="meta-date" />
+                                    <Label text="{{ isLocked ? '🔒' : '' }}" 
+                                           col="3"
+                                           class="lock-icon" />
+                                </GridLayout>
+                            </GridLayout>
+                        </ListView.itemTemplate>
+                    </ListView>
+                </GridLayout>
+            </TabViewItem>
+
+            <!-- Events Tab -->
+            <TabViewItem title="Events">
+                <GridLayout rows="auto, *">
+                    <Button text="New Event" 
+                            tap="{{ onNewEvent }}"
+                            class="new-event-button"
+                            row="0" />
+                    <ListView items="{{ events }}"
+                             itemTap="{{ onEventTap }}"
+                             row="1"
+                             class="events-list">
+                        <ListView.itemTemplate>
+                            <GridLayout rows="auto, auto, auto" class="event-item">
+                                <Label text="{{ title }}" class="event-title" row="0" />
+                                <Label text="{{ description }}" 
+                                       textWrap="true"
+                                       class="event-description"
+                                       row="1" />
+                                <GridLayout columns="auto, auto, *" 
+                                          class="event-meta"
+                                          row="2">
+                                    <Label text="{{ startDate }}" col="0" class="meta-date" />
+                                    <Label text="{{ type }}" col="1" class="event-type" />
+                                    <Label text="{{ attendees.going.length + ' going' }}" 
+                                           col="2"
+                                           class="attendees-count" />
+                                </GridLayout>
+                            </GridLayout>
+                        </ListView.itemTemplate>
+                    </ListView>
+                </GridLayout>
+            </TabViewItem>
+
+            <!-- Members Tab -->
+            <TabViewItem title="Members">
+                <GridLayout rows="auto, *">
+                    <GridLayout columns="auto, *" 
+                               class="members-header"
+                               row="0">
+                        <Label text="{{ club.stats.totalMembers + ' Members' }}"
+                               class="members-count"
+                               col="0" />
+                        <Button text="Invite" 
+                                tap="{{ onInviteMembers }}"
+                                class="invite-button"
+                                col="1"
+                                horizontalAlignment="right" />
+                    </GridLayout>
+                    <ListView items="{{ members }}"
+                             itemTap="{{ onMemberTap }}"
+                             row="1"
+                             class="members-list">
+                        <ListView.itemTemplate>
+                            <GridLayout columns="auto, *, auto" class="member-item">
+                                <Image src="{{ photoUrl }}" 
+                                       width="40" height="40"
+                                       class="member-avatar"
+                                       col="0" />
+                                <StackLayout col="1">
+                                    <Label text="{{ displayName }}" class="member-name" />
+                                    <Label text="{{ roles.join(', ') }}" 
+                                           class="member-roles"
+                                           visibility="{{ roles.length > 0 ? 'visible' : 'collapsed' }}" />
+                                </StackLayout>
+                                <Button text="⋮"
+                                        tap="{{ $parents['ClubDetailsViewModel'].onShowMemberOptions }}"
+                                        class="options-button"
+                                        col="2"
+                                        visibility="{{ $parents['ClubDetailsViewModel'].canManageMembers ? 'visible' : 'collapsed' }}" />
+                            </GridLayout>
+                        </ListView.itemTemplate>
+                    </ListView>
+                </GridLayout>
+            </TabViewItem>
+        </TabView>
+    </GridLayout>
+
+    <!-- Options Menu -->
+    <AbsoluteLayout visibility="{{ isShowingOptions ? 'visible' : 'collapsed' }}"
+                    class="modal-overlay"
+                    tap="{{ onHideOptions }}">
+        <StackLayout class="options-menu">
+            <Button text="Edit Club" 
+                    tap="{{ onEditClub }}"
+                    class="option-button" />
+            <Button text="Manage Roles" 
+                    tap="{{ onManageRoles }}"
+                    class="option-button" />
+            <Button text="Delete Club" 
+                    tap="{{ onDeleteClub }}"
+                    class="option-button delete-button" />
+        </StackLayout>
+    </AbsoluteLayout>
+
+    <!-- Member Options Menu -->
+    <AbsoluteLayout visibility="{{ isShowingMemberOptions ? 'visible' : 'collapsed' }}"
+                    class="modal-overlay"
+                    tap="{{ onHideMemberOptions }}">
+        <StackLayout class="options-menu">
+            <Button text="Assign Role" 
+                    tap="{{ onAssignRole }}"
+                    class="option-button" />
+            <Button text="Remove from Club" 
+                    tap="{{ onRemoveMember }}"
+                    class="option-button delete-button" />
+        </StackLayout>
+    </AbsoluteLayout>
+</Page>
