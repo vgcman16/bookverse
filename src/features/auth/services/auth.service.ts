@@ -1,66 +1,21 @@
 import { Observable, BehaviorSubject } from 'rxjs';
-import { firebase } from '@nativescript/firebase-core';
-import '@nativescript/firebase-auth';
-import { 
-    User, 
-    UserCredentials, 
-    AuthState, 
-    UserProfileUpdate 
-} from '../models/user.model';
-import { getFirebaseErrorMessage } from '../../../core/config/firebase.config';
-
-type NativeScriptFirebaseUser = {
-    uid: string;
-    email: string | null;
-    displayName: string | null;
-    photoUri: string | null;
-    metadata: {
-        creationDate: Date;
-        lastSignInDate: Date;
-    };
-};
+import { User, UserCredentials, UserRegistration, UserUpdate, AuthState, DEFAULT_USER_PREFERENCES } from '../models/user.model';
 
 export class AuthService {
     private static instance: AuthService;
+    private currentUser: User | null = null;
+    private users: Map<string, User> = new Map();
+    private authState: AuthState = {
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
+        error: null
+    };
     private authStateSubject: BehaviorSubject<AuthState>;
 
     private constructor() {
-        this.authStateSubject = new BehaviorSubject<AuthState>({
-            isAuthenticated: false,
-            isLoading: true,
-            user: null,
-            error: null
-        });
-
-        // Listen to Firebase auth state changes
-        firebase().auth().addAuthStateChangeListener((fbUser: any) => {
-            if (fbUser) {
-                const user: NativeScriptFirebaseUser = {
-                    uid: fbUser.uid,
-                    email: fbUser.email,
-                    displayName: fbUser.displayName,
-                    photoUri: fbUser.photoUri,
-                    metadata: {
-                        creationDate: fbUser.metadata?.creationDate || new Date(),
-                        lastSignInDate: fbUser.metadata?.lastSignInDate || new Date()
-                    }
-                };
-
-                this.updateAuthState({
-                    isAuthenticated: true,
-                    isLoading: false,
-                    user: this.mapFirebaseUser(user),
-                    error: null
-                });
-            } else {
-                this.updateAuthState({
-                    isAuthenticated: false,
-                    isLoading: false,
-                    user: null,
-                    error: null
-                });
-            }
-        });
+        this.authStateSubject = new BehaviorSubject<AuthState>(this.authState);
+        this.initializeMockData();
     }
 
     public static getInstance(): AuthService {
@@ -70,146 +25,211 @@ export class AuthService {
         return AuthService.instance;
     }
 
-    public get authState$(): Observable<AuthState> {
-        return this.authStateSubject.asObservable();
-    }
+    public async signIn(credentials: UserCredentials): Promise<User> {
+        this.updateAuthState({ isLoading: true, error: null });
 
-    public isAuthenticated(): boolean {
-        return this.authStateSubject.value.isAuthenticated;
-    }
-
-    public getCurrentUser(): User | null {
-        return this.authStateSubject.value.user;
-    }
-
-    public async signIn(credentials: UserCredentials): Promise<void> {
         try {
-            this.updateAuthState({ ...this.authStateSubject.value, isLoading: true });
-            await firebase().auth().signInWithEmailAndPassword(
-                credentials.email,
-                credentials.password
+            const user = Array.from(this.users.values()).find(u => 
+                u.email === credentials.email && 
+                (u as any).password === credentials.password
             );
-        } catch (error) {
-            const errorMessage = getFirebaseErrorMessage(error);
+
+            if (!user) {
+                throw new Error('Invalid email or password');
+            }
+
+            this.currentUser = user;
             this.updateAuthState({
-                ...this.authStateSubject.value,
+                user,
+                isAuthenticated: true,
+                isLoading: false
+            });
+
+            return user;
+        } catch (error) {
+            this.updateAuthState({
                 isLoading: false,
-                error: errorMessage
+                error: error instanceof Error ? error.message : 'An error occurred'
             });
             throw error;
         }
     }
 
-    public async signUp(credentials: UserCredentials): Promise<void> {
+    public async signUp(registration: UserRegistration): Promise<User> {
+        this.updateAuthState({ isLoading: true, error: null });
+
         try {
-            this.updateAuthState({ ...this.authStateSubject.value, isLoading: true });
-            const userCredential = await firebase().auth().createUserWithEmailAndPassword(
-                credentials.email,
-                credentials.password
-            );
-            
-            if (userCredential.user) {
-                // Additional user setup can be done here
-                console.log('User created successfully');
+            if (Array.from(this.users.values()).some(u => u.email === registration.email)) {
+                throw new Error('Email already in use');
             }
-        } catch (error) {
-            const errorMessage = getFirebaseErrorMessage(error);
+
+            const newUser: User = {
+                id: Date.now().toString(),
+                email: registration.email,
+                displayName: registration.displayName,
+                photoURL: registration.photoURL || 'assets/images/default-avatar.png',
+                bio: registration.bio || '',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                preferences: DEFAULT_USER_PREFERENCES,
+                stats: {
+                    totalBooksRead: 0,
+                    totalPagesRead: 0,
+                    averageRating: 0,
+                    reviewsWritten: 0,
+                    challengesCompleted: 0,
+                    readingStreak: 0
+                }
+            };
+
+            this.users.set(newUser.id, newUser);
+            this.currentUser = newUser;
             this.updateAuthState({
-                ...this.authStateSubject.value,
+                user: newUser,
+                isAuthenticated: true,
+                isLoading: false
+            });
+
+            return newUser;
+        } catch (error) {
+            this.updateAuthState({
                 isLoading: false,
-                error: errorMessage
+                error: error instanceof Error ? error.message : 'An error occurred'
             });
             throw error;
         }
     }
 
     public async signOut(): Promise<void> {
-        try {
-            await firebase().auth().signOut();
-        } catch (error) {
-            const errorMessage = getFirebaseErrorMessage(error);
-            this.updateAuthState({
-                ...this.authStateSubject.value,
-                error: errorMessage
-            });
-            throw error;
+        this.currentUser = null;
+        this.updateAuthState({
+            user: null,
+            isAuthenticated: false,
+            isLoading: false,
+            error: null
+        });
+    }
+
+    public async updateProfile(updates: Partial<User>): Promise<User> {
+        if (!this.currentUser) {
+            throw new Error('No user is currently logged in');
         }
-    }
 
-    public async resetPassword(email: string): Promise<void> {
-        try {
-            await firebase().auth().sendPasswordResetEmail(email);
-        } catch (error) {
-            const errorMessage = getFirebaseErrorMessage(error);
-            throw new Error(errorMessage);
-        }
-    }
-
-    public async updateProfile(displayName: string, photoUri?: string): Promise<void> {
-        try {
-            const currentUser = firebase().auth().currentUser;
-            if (currentUser) {
-                const updateData: UserProfileUpdate = { displayName };
-                if (photoUri) {
-                    updateData.photoUri = photoUri;
-                }
-                
-                await currentUser.updateProfile(updateData);
-                
-                // Get the updated user data
-                const updatedUser = firebase().auth().currentUser;
-                if (updatedUser) {
-                    const user: NativeScriptFirebaseUser = {
-                        uid: updatedUser.uid,
-                        email: updatedUser.email,
-                        displayName: updatedUser.displayName,
-                        photoUri: updatedUser.photoUri,
-                        metadata: {
-                            creationDate: updatedUser.metadata?.creationDate || new Date(),
-                            lastSignInDate: updatedUser.metadata?.lastSignInDate || new Date()
-                        }
-                    };
-                    
-                    this.updateAuthState({
-                        ...this.authStateSubject.value,
-                        user: this.mapFirebaseUser(user)
-                    });
-                }
-            }
-        } catch (error) {
-            const errorMessage = getFirebaseErrorMessage(error);
-            throw new Error(errorMessage);
-        }
-    }
-
-    private updateAuthState(state: AuthState): void {
-        this.authStateSubject.next(state);
-    }
-
-    private mapFirebaseUser(firebaseUser: NativeScriptFirebaseUser): User {
-        return {
-            id: firebaseUser.uid,
-            email: firebaseUser.email || '',
-            displayName: firebaseUser.displayName || '',
-            photoUri: firebaseUser.photoUri || undefined,
-            createdAt: firebaseUser.metadata.creationDate,
-            lastLoginAt: firebaseUser.metadata.lastSignInDate,
-            preferences: {
-                theme: 'light',
+        // Ensure preferences are properly merged
+        const updatedPreferences = updates.preferences
+            ? {
+                ...this.currentUser.preferences,
+                ...updates.preferences,
                 notifications: {
-                    pushEnabled: true,
-                    emailEnabled: true,
-                    bookClubUpdates: true,
-                    reviewResponses: true,
-                    newFollowers: true
+                    ...this.currentUser.preferences?.notifications,
+                    ...updates.preferences.notifications
                 },
                 privacy: {
-                    profileVisibility: 'public',
-                    showReadingProgress: true,
-                    showReviews: true,
-                    allowMessages: true
+                    ...this.currentUser.preferences?.privacy,
+                    ...updates.preferences.privacy
                 }
             }
+            : this.currentUser.preferences;
+
+        const updatedUser: User = {
+            ...this.currentUser,
+            ...updates,
+            preferences: updatedPreferences,
+            updatedAt: new Date()
         };
+
+        this.users.set(updatedUser.id, updatedUser);
+        this.currentUser = updatedUser;
+        this.updateAuthState({
+            user: updatedUser,
+            isAuthenticated: true
+        });
+
+        return updatedUser;
+    }
+
+    public getCurrentUser(): User | null {
+        return this.currentUser;
+    }
+
+    public async getUserById(userId: string): Promise<User | null> {
+        return this.users.get(userId) || null;
+    }
+
+    public async searchUsers(query: string): Promise<User[]> {
+        const searchTerm = query.toLowerCase();
+        return Array.from(this.users.values()).filter(user =>
+            user.displayName.toLowerCase().includes(searchTerm) ||
+            user.email.toLowerCase().includes(searchTerm)
+        );
+    }
+
+    public getIsAuthenticated(): boolean {
+        return this.authState.isAuthenticated;
+    }
+
+    public get authState$(): Observable<AuthState> {
+        return this.authStateSubject.asObservable();
+    }
+
+    private updateAuthState(updates: Partial<AuthState>): void {
+        this.authState = {
+            ...this.authState,
+            ...updates
+        };
+        this.authStateSubject.next(this.authState);
+    }
+
+    private initializeMockData(): void {
+        const mockUsers: Array<User & { password: string }> = [
+            {
+                id: '1',
+                email: 'john@example.com',
+                password: 'password123',
+                displayName: 'John Doe',
+                photoURL: 'https://example.com/john.jpg',
+                bio: 'Avid reader and book enthusiast',
+                favoriteGenres: ['Fiction', 'Mystery', 'Science Fiction'],
+                favoriteAuthors: ['J.K. Rowling', 'Stephen King'],
+                readingGoal: 52,
+                booksRead: 12,
+                createdAt: new Date('2023-01-01'),
+                updatedAt: new Date('2023-01-01'),
+                preferences: DEFAULT_USER_PREFERENCES,
+                stats: {
+                    totalBooksRead: 45,
+                    totalPagesRead: 12350,
+                    averageRating: 4.2,
+                    reviewsWritten: 28,
+                    challengesCompleted: 3,
+                    readingStreak: 15
+                }
+            },
+            {
+                id: '2',
+                email: 'jane@example.com',
+                password: 'password456',
+                displayName: 'Jane Smith',
+                photoURL: 'https://example.com/jane.jpg',
+                bio: 'Book reviewer and literature lover',
+                favoriteGenres: ['Romance', 'Fantasy', 'Historical Fiction'],
+                favoriteAuthors: ['Jane Austen', 'George R.R. Martin'],
+                readingGoal: 24,
+                booksRead: 8,
+                createdAt: new Date('2023-01-02'),
+                updatedAt: new Date('2023-01-02'),
+                preferences: DEFAULT_USER_PREFERENCES,
+                stats: {
+                    totalBooksRead: 32,
+                    totalPagesRead: 8750,
+                    averageRating: 4.5,
+                    reviewsWritten: 15,
+                    challengesCompleted: 2,
+                    readingStreak: 8
+                }
+            }
+        ];
+
+        mockUsers.forEach(user => this.users.set(user.id, user));
     }
 }
