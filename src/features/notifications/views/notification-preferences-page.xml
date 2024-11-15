@@ -1,0 +1,82 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="page">
+    <ActionBar title="Notification Settings" class="action-bar">
+        <NavigationButton visibility="visible" />
+    </ActionBar>
+
+    <ScrollView>
+        <StackLayout class="p-16">
+            <!-- Global Toggle -->
+            <GridLayout rows="auto" columns="*, auto" class="settings-item">
+                <Label text="Enable All Notifications" class="h3" />
+                <Switch checked="{{ isGlobalEnabled }}" tap="{{ toggleGlobalEnabled }}" col="1" />
+            </GridLayout>
+            
+            <!-- Quiet Hours -->
+            <StackLayout class="settings-section">
+                <Label text="Quiet Hours" class="h2 section-header" />
+                <GridLayout rows="auto" columns="*, auto" class="settings-item">
+                    <Label text="Enable Quiet Hours" />
+                    <Switch checked="{{ quietHours.enabled }}" tap="{{ toggleQuietHours }}" col="1" />
+                </GridLayout>
+                <GridLayout rows="auto" columns="*, *" class="settings-item" visibility="{{ quietHours.enabled ? 'visible' : 'collapsed' }}">
+                    <TimePicker hour="{{ quietHours.startTime }}" minute="0" col="0" />
+                    <TimePicker hour="{{ quietHours.endTime }}" minute="0" col="1" />
+                </GridLayout>
+            </StackLayout>
+
+            <!-- Email Settings -->
+            <StackLayout class="settings-section">
+                <Label text="Email Preferences" class="h2 section-header" />
+                <GridLayout rows="auto, auto" columns="*" class="settings-item">
+                    <Label text="Digest Frequency" row="0" />
+                    <SegmentedBar row="1" selectedIndex="{{ emailSettings.digestFrequency === 'daily' ? 0 : emailSettings.digestFrequency === 'weekly' ? 1 : 2 }}">
+                        <SegmentedBar.items>
+                            <SegmentedBarItem title="Daily" />
+                            <SegmentedBarItem title="Weekly" />
+                            <SegmentedBarItem title="Never" />
+                        </SegmentedBar.items>
+                    </SegmentedBar>
+                </GridLayout>
+                <GridLayout rows="auto" columns="*, auto" class="settings-item" visibility="{{ emailSettings.digestFrequency !== 'never' ? 'visible' : 'collapsed' }}">
+                    <Label text="Digest Time" />
+                    <TimePicker hour="{{ emailSettings.digestTime }}" minute="0" col="1" />
+                </GridLayout>
+            </StackLayout>
+
+            <!-- Notification Categories -->
+            <StackLayout class="settings-section">
+                <Label text="Notification Categories" class="h2 section-header" />
+                <Repeater items="{{ notificationTypes }}">
+                    <Repeater.itemTemplate>
+                        <StackLayout class="category-item">
+                            <GridLayout rows="auto, auto" columns="*, auto" class="settings-item">
+                                <Label text="{{ $value }}" class="category-title" row="0" />
+                                <Switch checked="{{ $parent.getCategoryPreference($value).enabled }}" 
+                                        tap="{{ $parent.toggleCategoryEnabled($value) }}" 
+                                        row="0" col="1" />
+                                
+                                <GridLayout rows="auto" columns="auto, auto, auto" row="1" 
+                                          visibility="{{ $parent.getCategoryPreference($value).enabled ? 'visible' : 'collapsed' }}"
+                                          class="delivery-options">
+                                    <Label text="In-App" col="0" />
+                                    <Label text="Push" col="1" />
+                                    <Label text="Email" col="2" />
+                                    
+                                    <Switch checked="{{ $parent.getCategoryPreference($value).delivery.inApp }}"
+                                            tap="{{ $parent.updateDeliveryPreference($value, { inApp: !$parent.getCategoryPreference($value).delivery.inApp }) }}"
+                                            row="1" col="0" />
+                                    <Switch checked="{{ $parent.getCategoryPreference($value).delivery.push }}"
+                                            tap="{{ $parent.updateDeliveryPreference($value, { push: !$parent.getCategoryPreference($value).delivery.push }) }}"
+                                            row="1" col="1" />
+                                    <Switch checked="{{ $parent.getCategoryPreference($value).delivery.email }}"
+                                            tap="{{ $parent.updateDeliveryPreference($value, { email: !$parent.getCategoryPreference($value).delivery.email }) }}"
+                                            row="1" col="2" />
+                                </GridLayout>
+                            </GridLayout>
+                        </StackLayout>
+                    </Repeater.itemTemplate>
+                </Repeater>
+            </StackLayout>
+        </StackLayout>
+    </ScrollView>
+</Page>

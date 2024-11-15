@@ -1,0 +1,144 @@
+/* General Layout */
+.page {
+    background-color: #f8f9fa;
+}
+
+.settings-section {
+    margin: 16 0;
+    background-color: #ffffff;
+    border-radius: 8;
+    padding: 16;
+}
+
+.section-header {
+    color: #2c3e50;
+    font-size: 18;
+    font-weight: bold;
+    margin-bottom: 12;
+}
+
+.settings-item {
+    padding: 12 0;
+    border-bottom-width: 1;
+    border-bottom-color: #e9ecef;
+}
+
+.settings-item Label {
+    color: #495057;
+    font-size: 16;
+}
+
+/* Global Toggle */
+.settings-item Switch {
+    color: #007bff;
+}
+
+/* Quiet Hours */
+TimePicker {
+    color: #495057;
+    font-size: 16;
+    background-color: #f8f9fa;
+    border-radius: 4;
+    padding: 8;
+    margin: 4;
+}
+
+/* Email Settings */
+SegmentedBar {
+    background-color: #e9ecef;
+    color: #495057;
+    selected-background-color: #007bff;
+    margin: 8 0;
+}
+
+/* Category Items */
+.category-item {
+    margin: 8 0;
+    background-color: #ffffff;
+    border-radius: 8;
+    padding: 12;
+}
+
+.category-title {
+    color: #2c3e50;
+    font-size: 16;
+    font-weight: 500;
+}
+
+.delivery-options {
+    margin-top: 8;
+    padding: 8;
+    background-color: #f8f9fa;
+    border-radius: 4;
+}
+
+.delivery-options Label {
+    font-size: 14;
+    color: #6c757d;
+    text-align: center;
+}
+
+/* Dark Mode Styles */
+.ns-dark .page {
+    background-color: #1a1a1a;
+}
+
+.ns-dark .settings-section {
+    background-color: #2d2d2d;
+}
+
+.ns-dark .section-header {
+    color: #ffffff;
+}
+
+.ns-dark .settings-item {
+    border-bottom-color: #3d3d3d;
+}
+
+.ns-dark .settings-item Label {
+    color: #e9ecef;
+}
+
+.ns-dark TimePicker {
+    color: #e9ecef;
+    background-color: #3d3d3d;
+}
+
+.ns-dark SegmentedBar {
+    background-color: #3d3d3d;
+    color: #e9ecef;
+}
+
+.ns-dark .category-item {
+    background-color: #2d2d2d;
+}
+
+.ns-dark .category-title {
+    color: #ffffff;
+}
+
+.ns-dark .delivery-options {
+    background-color: #3d3d3d;
+}
+
+.ns-dark .delivery-options Label {
+    color: #adb5bd;
+}
+
+/* Animations */
+.settings-section {
+    animation-name: slideIn;
+    animation-duration: 0.3;
+    animation-timing-function: ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translate(0, 20);
+        opacity: 0;
+    }
+    to {
+        transform: translate(0, 0);
+        opacity: 1;
+    }
+}
