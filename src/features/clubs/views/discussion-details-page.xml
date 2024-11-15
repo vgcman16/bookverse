@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="page">
+    <ActionBar class="action-bar">
+        <NavigationButton android.systemIcon="ic_menu_back" />
+        <ActionBar.title>
+            <GridLayout columns="*, auto">
+                <Label col="0" text="{{ discussion.title }}" class="action-bar-title" textWrap="true" />
+                <Button col="1" 
+                        text="⋮" 
+                        tap="{{ onShowOptions }}"
+                        class="options-button"
+                        visibility="{{ canModerate ? 'visible' : 'collapsed' }}" />
+            </GridLayout>
+        </ActionBar.title>
+    </ActionBar>
+
+    <GridLayout rows="*, auto">
+        <!-- Discussion Content -->
+        <ScrollView row="0">
+            <StackLayout class="discussion-container">
+                <!-- Original Post -->
+                <GridLayout rows="auto, auto, auto" class="original-post">
+                    <!-- Author Info -->
+                    <GridLayout columns="auto, *, auto" row="0" class="post-header">
+                        <Image src="{{ discussion.authorPhotoUrl }}" 
+                               width="40" height="40"
+                               class="author-avatar"
+                               col="0" />
+                        <StackLayout col="1">
+                            <Label text="{{ discussion.authorName }}" class="author-name" />
+                            <Label text="{{ discussion.createdAt }}" class="post-date" />
+                        </StackLayout>
+                        <Label text="{{ discussion.isPinned ? '📌' : '' }}"
+                               class="pin-icon"
+                               col="2" />
+                    </GridLayout>
+
+                    <!-- Content -->
+                    <Label text="{{ discussion.content }}" 
+                           textWrap="true"
+                           class="post-content"
+                           row="1" />
+
+                    <!-- Actions -->
+                    <GridLayout columns="auto, auto, *" 
+                               class="post-actions"
+                               row="2">
+                        <Button text="{{ discussion.liked ? '❤️' : '🤍' }} {{ discussion.likes }}"
+                                tap="{{ onLikeDiscussion }}"
+                                class="action-button"
+                                col="0" />
+                        <Button text="💬 {{ discussion.replies.length }}"
+                                class="action-button"
+                                col="1" />
+                        <Label text="{{ discussion.isLocked ? '🔒 Locked' : '' }}"
+                               class="lock-status"
+                               col="2" />
+                    </GridLayout>
+                </GridLayout>
+
+                <!-- Book Reference -->
+                <GridLayout columns="auto, *" 
+                           class="book-reference"
+                           visibility="{{ discussion.bookId ? 'visible' : 'collapsed' }}">
+                    <Image src="{{ book.imageLinks.thumbnail }}" 
+                           width="40" height="60"
+                           class="book-cover"
+                           col="0" />
+                    <StackLayout col="1">
+                        <Label text="{{ book.title }}" class="book-title" />
+                        <Label text="{{ book.authors.join(', ') }}" class="book-author" />
+                    </StackLayout>
+                </GridLayout>
+
+                <!-- Replies -->
+                <StackLayout class="replies-container">
+                    <Label text="Replies" class="section-header" />
+                    <ListView items="{{ replies }}" class="replies-list">
+                        <ListView.itemTemplate>
+                            <GridLayout rows="auto, auto, auto" class="reply-item">
+                                <!-- Reply Author -->
+                                <GridLayout columns="auto, *" row="0" class="reply-header">
+                                    <Image src="{{ authorPhotoUrl }}" 
+                                           width="32" height="32"
+                                           class="author-avatar-small"
+                                           col="0" />
+                                    <StackLayout col="1">
+                                        <Label text="{{ authorName }}" class="author-name" />
+                                        <Label text="{{ createdAt }}" class="reply-date" />
+                                    </StackLayout>
+                                </GridLayout>
+
+                                <!-- Reply Content -->
+                                <Label text="{{ content }}" 
+                                       textWrap="true"
+                                       class="reply-content"
+                                       row="1" />
+
+                                <!-- Reply Actions -->
+                                <GridLayout columns="auto, auto, *" 
+                                          class="reply-actions"
+                                          row="2">
+                                    <Button text="{{ liked ? '❤️' : '🤍' }} {{ likes }}"
+                                            tap="{{ $parents['DiscussionDetailsViewModel'].onLikeReply }}"
+                                            class="action-button-small"
+                                            col="0" />
+                                    <Button text="↩️ Reply"
+                                            tap="{{ $parents['DiscussionDetailsViewModel'].onReplyToComment }}"
+                                            class="action-button-small"
+                                            col="1"
+                                            visibility="{{ !$parents['DiscussionDetailsViewModel'].discussion.isLocked ? 'visible' : 'collapsed' }}" />
+                                    <Button text="⋮"
+                                            tap="{{ $parents['DiscussionDetailsViewModel'].onShowReplyOptions }}"
+                                            class="options-button"
+                                            col="2"
+                                            horizontalAlignment="right"
+                                            visibility="{{ $parents['DiscussionDetailsViewModel'].canModerateReply($value) ? 'visible' : 'collapsed' }}" />
+                                </GridLayout>
+
+                                <!-- Nested Replies -->
+                                <ListView items="{{ replies }}" 
+                                         class="nested-replies"
+                                         visibility="{{ replies.length > 0 ? 'visible' : 'collapsed' }}"
+                                         row="3">
+                                    <ListView.itemTemplate>
+                                        <GridLayout rows="auto, auto, auto" class="nested-reply-item">
+                                            <!-- Nested Reply Author -->
+                                            <GridLayout columns="auto, *" row="0" class="reply-header">
+                                                <Image src="{{ authorPhotoUrl }}" 
+                                                       width="24" height="24"
+                                                       class="author-avatar-smaller"
+                                                       col="0" />
+                                                <StackLayout col="1">
+                                                    <Label text="{{ authorName }}" class="author-name-small" />
+                                                    <Label text="{{ createdAt }}" class="reply-date-small" />
+                                                </StackLayout>
+                                            </GridLayout>
+
+                                            <!-- Nested Reply Content -->
+                                            <Label text="{{ content }}" 
+                                                   textWrap="true"
+                                                   class="reply-content-small"
+                                                   row="1" />
+
+                                            <!-- Nested Reply Actions -->
+                                            <GridLayout columns="auto, auto, *" 
+                                                      class="reply-actions-small"
+                                                      row="2">
+                                                <Button text="{{ liked ? '❤️' : '🤍' }} {{ likes }}"
+                                                        tap="{{ $parents['DiscussionDetailsViewModel'].onLikeNestedReply }}"
+                                                        class="action-button-smaller"
+                                                        col="0" />
+                                                <Button text="⋮"
+                                                        tap="{{ $parents['DiscussionDetailsViewModel'].onShowNestedReplyOptions }}"
+                                                        class="options-button"
+                                                        col="2"
+                                                        horizontalAlignment="right"
+                                                        visibility="{{ $parents['DiscussionDetailsViewModel'].canModerateReply($value) ? 'visible' : 'collapsed' }}" />
+                                            </GridLayout>
+                                        </GridLayout>
+                                    </ListView.itemTemplate>
+                                </ListView>
+                            </GridLayout>
+                        </ListView.itemTemplate>
+                    </ListView>
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
+
+        <!-- Reply Input -->
+        <GridLayout row="1" 
+                   columns="*, auto" 
+                   class="reply-input-container"
+                   visibility="{{ !discussion.isLocked ? 'visible' : 'collapsed' }}">
+            <TextView hint="Write a reply..." 
+                     text="{{ newReplyText }}"
+                     class="reply-input"
+                     col="0" />
+            <Button text="Send"
+                    tap="{{ onSendReply }}"
+                    isEnabled="{{ newReplyText.length > 0 }}"
+                    class="send-button"
+                    col="1" />
+        </GridLayout>
+
+        <!-- Discussion Options Menu -->
+        <AbsoluteLayout row="0" rowSpan="2"
+                        visibility="{{ isShowingOptions ? 'visible' : 'collapsed' }}"
+                        class="modal-overlay"
+                        tap="{{ onHideOptions }}">
+            <StackLayout class="options-menu">
+                <Button text="{{ discussion.isPinned ? 'Unpin Discussion' : 'Pin Discussion' }}" 
+                        tap="{{ onTogglePin }}"
+                        class="option-button" />
+                <Button text="{{ discussion.isLocked ? 'Unlock Discussion' : 'Lock Discussion' }}" 
+                        tap="{{ onToggleLock }}"
+                        class="option-button" />
+                <Button text="Delete Discussion" 
+                        tap="{{ onDeleteDiscussion }}"
+                        class="option-button delete-button" />
+            </StackLayout>
+        </AbsoluteLayout>
+
+        <!-- Reply Options Menu -->
+        <AbsoluteLayout row="0" rowSpan="2"
+                        visibility="{{ isShowingReplyOptions ? 'visible' : 'collapsed' }}"
+                        class="modal-overlay"
+                        tap="{{ onHideReplyOptions }}">
+            <StackLayout class="options-menu">
+                <Button text="Edit Reply" 
+                        tap="{{ onEditReply }}"
+                        class="option-button" />
+                <Button text="Delete Reply" 
+                        tap="{{ onDeleteReply }}"
+                        class="option-button delete-button" />
+            </StackLayout>
+        </AbsoluteLayout>
+    </GridLayout>
+</Page>

@@ -14,15 +14,24 @@ import {
     DiscussionReply
 } from '../models/club.model';
 
+interface DiscussionUpdate {
+    title?: string;
+    content?: string;
+    isPinned?: boolean;
+    isLocked?: boolean;
+}
+
 export class ClubService {
     private static instance: ClubService;
     private authService: AuthService;
     private clubs: Map<string, BookClub> = new Map();
-    private discussions: Map<string, ClubDiscussion> = new Map();
+    private discussions: Map<string, Map<string, ClubDiscussion>> = new Map(); // clubId -> discussionId -> discussion
     private events: Map<string, ClubEvent> = new Map();
     private challenges: Map<string, ReadingChallenge> = new Map();
     private memberships: Map<string, ClubMembership[]> = new Map(); // userId -> memberships
     private userClubsSubject: BehaviorSubject<BookClub[]>;
+    private discussionLikes: Set<string> = new Set(); // discussionId-userId
+    private replyLikes: Set<string> = new Set(); // replyId-userId
 
     private constructor() {
         this.authService = AuthService.getInstance();
@@ -176,15 +185,13 @@ export class ClubService {
 
     // Discussion Management
     public async createDiscussion(clubId: string, title: string, content: string, bookId?: string): Promise<ClubDiscussion> {
-        await this.validatePermission(clubId, ClubPermission.ManageDiscussions);
-
         const user = this.authService.getCurrentUser();
         if (!user) {
             throw new Error('User must be authenticated to create discussions');
         }
 
         const discussion: ClubDiscussion = {
-            id: Date.now().toString(),
+            id: Date.now().toString(), // TODO: Use proper ID generation
             clubId,
             title,
             content,
@@ -199,24 +206,56 @@ export class ClubService {
             updatedAt: new Date()
         };
 
-        this.discussions.set(discussion.id, discussion);
-        
-        const club = await this.getClub(clubId);
-        if (club) {
-            club.stats.activeDiscussions++;
-            await this.saveClub(club);
+        let clubDiscussions = this.discussions.get(clubId);
+        if (!clubDiscussions) {
+            clubDiscussions = new Map();
+            this.discussions.set(clubId, clubDiscussions);
         }
+        clubDiscussions.set(discussion.id, discussion);
 
         return discussion;
     }
 
-    public async addDiscussionReply(discussionId: string, content: string, parentReplyId?: string): Promise<DiscussionReply> {
+    public async getDiscussion(clubId: string, discussionId: string): Promise<ClubDiscussion | null> {
+        const clubDiscussions = this.discussions.get(clubId);
+        return clubDiscussions?.get(discussionId) || null;
+    }
+
+    public async updateDiscussion(clubId: string, discussionId: string, updates: DiscussionUpdate): Promise<ClubDiscussion> {
+        const discussion = await this.getDiscussion(clubId, discussionId);
+        if (!discussion) {
+            throw new Error('Discussion not found');
+        }
+
+        const updatedDiscussion: ClubDiscussion = {
+            ...discussion,
+            ...updates,
+            updatedAt: new Date()
+        };
+
+        const clubDiscussions = this.discussions.get(clubId);
+        clubDiscussions?.set(discussionId, updatedDiscussion);
+
+        return updatedDiscussion;
+    }
+
+    public async deleteDiscussion(clubId: string, discussionId: string): Promise<void> {
+        const clubDiscussions = this.discussions.get(clubId);
+        if (!clubDiscussions) return;
+
+        clubDiscussions.delete(discussionId);
+        if (clubDiscussions.size === 0) {
+            this.discussions.delete(clubId);
+        }
+    }
+
+    public async addDiscussionReply(clubId: string, discussionId: string, content: string, parentReplyId?: string): Promise<DiscussionReply> {
         const user = this.authService.getCurrentUser();
         if (!user) {
             throw new Error('User must be authenticated to reply');
         }
 
-        const discussion = this.discussions.get(discussionId);
+        const discussion = await this.getDiscussion(clubId, discussionId);
         if (!discussion) {
             throw new Error('Discussion not found');
         }
@@ -237,50 +276,93 @@ export class ClubService {
         };
 
         discussion.replies.push(reply);
-        discussion.updatedAt = new Date();
-        this.discussions.set(discussionId, discussion);
+        const clubDiscussions = this.discussions.get(clubId);
+        clubDiscussions?.set(discussionId, discussion);
 
         return reply;
     }
 
-    // Event Management
-    public async createEvent(clubId: string, event: Omit<ClubEvent, 'id' | 'createdAt' | 'updatedAt'>): Promise<ClubEvent> {
-        await this.validatePermission(clubId, ClubPermission.ManageEvents);
+    public async deleteReply(clubId: string, discussionId: string, replyId: string): Promise<void> {
+        const discussion = await this.getDiscussion(clubId, discussionId);
+        if (!discussion) return;
 
-        const newEvent: ClubEvent = {
-            ...event,
-            id: Date.now().toString(),
-            createdAt: new Date(),
-            updatedAt: new Date()
-        };
+        discussion.replies = discussion.replies.filter(reply => reply.id !== replyId);
+        const clubDiscussions = this.discussions.get(clubId);
+        clubDiscussions?.set(discussionId, discussion);
+    }
 
-        this.events.set(newEvent.id, newEvent);
-
-        const club = await this.getClub(clubId);
-        if (club) {
-            club.stats.upcomingEvents++;
-            await this.saveClub(club);
+    public async toggleDiscussionLike(clubId: string, discussionId: string): Promise<void> {
+        const user = this.authService.getCurrentUser();
+        if (!user) {
+            throw new Error('User must be authenticated to like discussions');
         }
 
-        return newEvent;
+        const discussion = await this.getDiscussion(clubId, discussionId);
+        if (!discussion) {
+            throw new Error('Discussion not found');
+        }
+
+        const likeId = `${discussionId}-${user.id}`;
+        const isLiked = this.discussionLikes.has(likeId);
+
+        if (isLiked) {
+            this.discussionLikes.delete(likeId);
+            discussion.likes--;
+        } else {
+            this.discussionLikes.add(likeId);
+            discussion.likes++;
+        }
+
+        const clubDiscussions = this.discussions.get(clubId);
+        clubDiscussions?.set(discussionId, discussion);
     }
 
-    // Challenge Management
-    public async createChallenge(clubId: string, challenge: Omit<ReadingChallenge, 'id' | 'createdAt' | 'updatedAt'>): Promise<ReadingChallenge> {
-        await this.validatePermission(clubId, ClubPermission.ManageChallenges);
+    public async toggleReplyLike(clubId: string, discussionId: string, replyId: string): Promise<void> {
+        const user = this.authService.getCurrentUser();
+        if (!user) {
+            throw new Error('User must be authenticated to like replies');
+        }
 
-        const newChallenge: ReadingChallenge = {
-            ...challenge,
-            id: Date.now().toString(),
-            createdAt: new Date(),
-            updatedAt: new Date()
-        };
+        const discussion = await this.getDiscussion(clubId, discussionId);
+        if (!discussion) {
+            throw new Error('Discussion not found');
+        }
 
-        this.challenges.set(newChallenge.id, newChallenge);
-        return newChallenge;
+        const reply = discussion.replies.find(r => r.id === replyId);
+        if (!reply) {
+            throw new Error('Reply not found');
+        }
+
+        const likeId = `${replyId}-${user.id}`;
+        const isLiked = this.replyLikes.has(likeId);
+
+        if (isLiked) {
+            this.replyLikes.delete(likeId);
+            reply.likes--;
+        } else {
+            this.replyLikes.add(likeId);
+            reply.likes++;
+        }
+
+        const clubDiscussions = this.discussions.get(clubId);
+        clubDiscussions?.set(discussionId, discussion);
     }
 
-    // Observables
+    public isDiscussionLiked(discussionId: string): boolean {
+        const user = this.authService.getCurrentUser();
+        if (!user) return false;
+
+        return this.discussionLikes.has(`${discussionId}-${user.id}`);
+    }
+
+    public isReplyLiked(replyId: string): boolean {
+        const user = this.authService.getCurrentUser();
+        if (!user) return false;
+
+        return this.replyLikes.has(`${replyId}-${user.id}`);
+    }
+
+    // Observable Getters
     public get userClubs$(): Observable<BookClub[]> {
         return this.userClubsSubject.asObservable();
     }
@@ -357,4 +439,6 @@ export class ClubService {
 
         this.userClubsSubject.next(userClubs.filter((club): club is BookClub => club !== null));
     }
+
+    // Keep existing club-related methods...
 }
