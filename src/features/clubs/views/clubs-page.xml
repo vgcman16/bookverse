@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="page">
+    <ActionBar title="Book Clubs" class="action-bar">
+        <NavigationButton visibility="collapsed" />
+        <ActionBar.actionItems>
+            <ActionItem ios.position="right" 
+                       android.position="actionBar"
+                       tap="{{ onCreateClub }}">
+                <Label text="+" class="action-item" />
+            </ActionItem>
+        </ActionBar.actionItems>
+    </ActionBar>
+
+    <GridLayout rows="auto, auto, *">
+        <!-- Search Bar -->
+        <SearchBar row="0"
+                  hint="Search book clubs"
+                  text="{{ searchQuery }}"
+                  submit="{{ onSearch }}"
+                  clear="{{ onClearSearch }}"
+                  class="search-bar" />
+
+        <!-- Tabs -->
+        <StackLayout row="1" orientation="horizontal" class="tabs-container">
+            <Label text="My Clubs" 
+                   tap="{{ onTabSelect }}"
+                   class="{{ selectedTab === 'my-clubs' ? 'tab-selected' : 'tab' }}" />
+            <Label text="Discover" 
+                   tap="{{ onTabSelect }}"
+                   class="{{ selectedTab === 'discover' ? 'tab-selected' : 'tab' }}" />
+        </StackLayout>
+
+        <!-- Clubs List -->
+        <ListView row="2" 
+                 items="{{ clubs }}" 
+                 itemTap="{{ onClubTap }}"
+                 class="clubs-list">
+            <ListView.itemTemplate>
+                <GridLayout columns="auto, *, auto" class="club-item">
+                    <!-- Club Cover -->
+                    <StackLayout col="0" class="club-cover">
+                        <Image src="{{ coverImage || '~/assets/images/club-placeholder.png' }}"
+                               width="60" height="60"
+                               class="club-image" />
+                        <Label text="{{ members.length + ' members' }}"
+                               class="member-count" />
+                    </StackLayout>
+
+                    <!-- Club Info -->
+                    <StackLayout col="1" class="club-info">
+                        <Label text="{{ name }}" class="club-name" />
+                        <Label text="{{ description }}" 
+                               class="club-description"
+                               textWrap="true" />
+                        
+                        <!-- Currently Reading -->
+                        <GridLayout columns="auto, *" 
+                                  class="reading-info"
+                                  visibility="{{ currentlyReading ? 'visible' : 'collapsed' }}">
+                            <Label text="📚" col="0" class="reading-icon" />
+                            <Label text="{{ 'Reading: ' + currentlyReadingTitle }}" 
+                                   col="1"
+                                   class="reading-text" />
+                        </GridLayout>
+
+                        <!-- Tags -->
+                        <WrapLayout class="tags-container">
+                            <Repeater items="{{ tags }}">
+                                <Repeater.itemTemplate>
+                                    <Label text="{{ $value }}" class="tag" />
+                                </Repeater.itemTemplate>
+                            </Repeater>
+                        </WrapLayout>
+
+                        <!-- Stats -->
+                        <GridLayout columns="auto, auto, auto" class="stats-container">
+                            <Label text="{{ stats.booksRead + ' books read' }}" 
+                                   class="stat"
+                                   col="0" />
+                            <Label text="{{ stats.activeDiscussions + ' discussions' }}" 
+                                   class="stat"
+                                   col="1" />
+                            <Label text="{{ stats.upcomingEvents + ' events' }}" 
+                                   class="stat"
+                                   col="2" />
+                        </GridLayout>
+                    </StackLayout>
+
+                    <!-- Join/Status Button -->
+                    <Button text="{{ isMember ? 'Joined' : 'Join' }}"
+                            tap="{{ $parents['ClubsViewModel'].onJoinClub }}"
+                            isEnabled="{{ !isMember }}"
+                            class="{{ isMember ? 'joined-button' : 'join-button' }}"
+                            col="2" />
+                </GridLayout>
+            </ListView.itemTemplate>
+        </ListView>
+
+        <!-- Empty State -->
+        <StackLayout row="2" 
+                     visibility="{{ !isLoading && clubs.length === 0 ? 'visible' : 'collapsed' }}"
+                     class="empty-state">
+            <Label text="👥" class="empty-icon" />
+            <Label text="{{ emptyStateMessage }}" class="empty-message" textWrap="true" />
+            <Button text="{{ selectedTab === 'my-clubs' ? 'Join a Club' : 'Create Club' }}" 
+                    tap="{{ selectedTab === 'my-clubs' ? onSwitchToDiscover : onCreateClub }}"
+                    class="action-button" />
+        </StackLayout>
+
+        <!-- Loading State -->
+        <ActivityIndicator row="2"
+                          busy="{{ isLoading }}" 
+                          visibility="{{ isLoading ? 'visible' : 'collapsed' }}"
+                          class="loading-indicator" />
+
+        <!-- Error State -->
+        <StackLayout row="2"
+                     visibility="{{ errorMessage ? 'visible' : 'collapsed' }}"
+                     class="error-state">
+            <Label text="❌" class="error-icon" />
+            <Label text="{{ errorMessage }}" class="error-message" textWrap="true" />
+            <Button text="Try Again" 
+                    tap="{{ onRetry }}"
+                    class="retry-button" />
+        </StackLayout>
+
+        <!-- Create Club Modal -->
+        <AbsoluteLayout row="0" rowSpan="3"
+                        visibility="{{ isCreatingClub ? 'visible' : 'collapsed' }}"
+                        class="modal-overlay">
+            <GridLayout rows="auto, auto, auto, auto, auto" class="modal-content">
+                <Label text="Create Book Club" class="modal-title" row="0" />
+                
+                <TextField hint="Club Name"
+                          text="{{ newClubName }}"
+                          class="modal-input"
+                          row="1" />
+                
+                <TextView hint="Description"
+                         text="{{ newClubDescription }}"
+                         class="modal-input description-input"
+                         row="2" />
+                
+                <GridLayout columns="auto, *" class="privacy-toggle" row="3">
+                    <Label text="Make Public" col="0" />
+                    <Switch checked="{{ isNewClubPublic }}" col="1" />
+                </GridLayout>
+
+                <GridLayout columns="*, *" row="4" class="modal-buttons">
+                    <Button text="Cancel" 
+                            tap="{{ onCancelCreate }}"
+                            class="modal-button-secondary"
+                            col="0" />
+                    <Button text="Create" 
+                            tap="{{ onConfirmCreate }}"
+                            isEnabled="{{ newClubName.length > 0 }}"
+                            class="modal-button-primary"
+                            col="1" />
+                </GridLayout>
+            </GridLayout>
+        </AbsoluteLayout>
+    </GridLayout>
+</Page>
