@@ -13,6 +13,7 @@ export interface NavigationOptions extends NavigationEntry {
     collectionId?: string;
     discussionId?: string;
     eventId?: string;
+    activityId?: string;
     mode?: string;
     onSelect?: (item: any) => void;
 }
@@ -41,6 +42,7 @@ export class NavigationService {
                 collectionId: options.collectionId,
                 discussionId: options.discussionId,
                 eventId: options.eventId,
+                activityId: options.activityId,
                 mode: options.mode,
                 onSelect: options.onSelect
             }
@@ -104,6 +106,7 @@ export class NavigationService {
                 collectionId: options.collectionId,
                 discussionId: options.discussionId,
                 eventId: options.eventId,
+                activityId: options.activityId,
                 mode: options.mode,
                 onSelect: options.onSelect
             },

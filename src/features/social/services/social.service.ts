@@ -27,13 +27,9 @@ export class SocialService {
     private notifications: Map<string, ActivityNotification[]> = new Map(); // userId -> notifications
     private followRequests: Map<string, FollowRequest[]> = new Map(); // userId -> requests
     private privacySettings: Map<string, PrivacySettings> = new Map(); // userId -> settings
-    private newsFeedSubject: BehaviorSubject<NewsFeedItem[]>;
-    private notificationsSubject: BehaviorSubject<ActivityNotification[]>;
 
     private constructor() {
         this.authService = AuthService.getInstance();
-        this.newsFeedSubject = new BehaviorSubject<NewsFeedItem[]>([]);
-        this.notificationsSubject = new BehaviorSubject<ActivityNotification[]>([]);
     }
 
     public static getInstance(): SocialService {
@@ -50,13 +46,20 @@ export class SocialService {
             throw new Error('Must be logged in to follow users');
         }
 
-        const targetSettings = await this.getPrivacySettings(targetUserId);
-        if (targetSettings.requireFollowApproval) {
-            await this.createFollowRequest(currentUser.id, targetUserId);
-            return;
-        }
+        const following: Following = {
+            id: Date.now().toString(),
+            followerId: currentUser.id,
+            followingId: targetUserId,
+            createdAt: new Date()
+        };
 
-        await this.createFollowRelationship(currentUser.id, targetUserId);
+        let userFollowing = this.following.get(currentUser.id) || [];
+        userFollowing.push(following);
+        this.following.set(currentUser.id, userFollowing);
+
+        let targetFollowers = this.followers.get(targetUserId) || [];
+        targetFollowers.push(following);
+        this.followers.set(targetUserId, targetFollowers);
     }
 
     public async unfollowUser(targetUserId: string): Promise<void> {
@@ -65,21 +68,13 @@ export class SocialService {
             throw new Error('Must be logged in to unfollow users');
         }
 
-        const userFollowing = this.following.get(currentUser.id) || [];
-        const followingIndex = userFollowing.findIndex(f => f.followingId === targetUserId);
-        if (followingIndex !== -1) {
-            userFollowing.splice(followingIndex, 1);
-            this.following.set(currentUser.id, userFollowing);
-        }
+        let userFollowing = this.following.get(currentUser.id) || [];
+        userFollowing = userFollowing.filter(f => f.followingId !== targetUserId);
+        this.following.set(currentUser.id, userFollowing);
 
-        const targetFollowers = this.followers.get(targetUserId) || [];
-        const followerIndex = targetFollowers.findIndex(f => f.followerId === currentUser.id);
-        if (followerIndex !== -1) {
-            targetFollowers.splice(followerIndex, 1);
-            this.followers.set(targetUserId, targetFollowers);
-        }
-
-        await this.updateNewsFeed();
+        let targetFollowers = this.followers.get(targetUserId) || [];
+        targetFollowers = targetFollowers.filter(f => f.followerId !== currentUser.id);
+        this.followers.set(targetUserId, targetFollowers);
     }
 
     public async getFollowers(userId: string): Promise<Following[]> {
@@ -109,94 +104,71 @@ export class SocialService {
         };
     }
 
-    // Activity Feed Management
-    public async createActivity(activity: Omit<UserActivity, 'id' | 'timestamp'>): Promise<UserActivity> {
-        const currentUser = this.authService.getCurrentUser();
-        if (!currentUser) {
-            throw new Error('Must be logged in to create activities');
-        }
+    // Activity Management
+    public async getActivities(filter?: ActivityFilter): Promise<NewsFeedItem[]> {
+        let activities = Array.from(this.activities.values()).flat();
 
-        const newActivity: UserActivity = {
-            ...activity,
-            id: Date.now().toString(),
-            timestamp: new Date()
-        };
-
-        const userActivities = this.activities.get(currentUser.id) || [];
-        userActivities.push(newActivity);
-        this.activities.set(currentUser.id, userActivities);
-
-        await this.updateNewsFeed();
-        return newActivity;
-    }
-
-    public async getActivities(filter?: ActivityFilter): Promise<UserActivity[]> {
-        const allActivities: UserActivity[] = [];
-        this.activities.forEach(activities => allActivities.push(...activities));
-
-        return this.filterActivities(allActivities, filter);
-    }
-
-    public async getNewsFeed(filter?: NewsFeedFilter): Promise<NewsFeedItem[]> {
-        const currentUser = this.authService.getCurrentUser();
-        if (!currentUser) {
-            return [];
-        }
-
-        const following = await this.getFollowing(currentUser.id);
-        const followingIds = new Set(following.map(f => f.followingId));
-        followingIds.add(currentUser.id); // Include user's own activities
-
-        const feedItems: NewsFeedItem[] = [];
-        for (const userId of followingIds) {
-            const userActivities = this.activities.get(userId) || [];
-            const user = await this.authService.getUserById(userId);
-            if (!user) continue;
-
-            for (const activity of userActivities) {
-                const interactions = this.interactions.get(activity.id) || [];
-                feedItems.push({
-                    ...activity,
-                    user: {
-                        id: user.id,
-                        name: user.displayName,
-                        avatarUrl: user.photoURL
-                    },
-                    interactions: {
-                        likes: interactions.filter(i => i.type === InteractionType.Like).length,
-                        comments: interactions.filter(i => i.type === InteractionType.Comment).length,
-                        hasLiked: interactions.some(i => i.type === InteractionType.Like && i.userId === currentUser.id)
-                    }
-                });
+        if (filter) {
+            if (filter.types) {
+                activities = activities.filter(a => filter.types!.includes(a.type));
+            }
+            if (filter.userId) {
+                activities = activities.filter(a => a.userId === filter.userId);
+            }
+            if (filter.isPublic !== undefined) {
+                activities = activities.filter(a => a.isPublic === filter.isPublic);
+            }
+            if (filter.startDate) {
+                activities = activities.filter(a => a.timestamp >= filter.startDate!);
+            }
+            if (filter.endDate) {
+                activities = activities.filter(a => a.timestamp <= filter.endDate!);
             }
         }
 
-        return this.filterNewsFeedItems(feedItems, filter);
+        // Transform UserActivity to NewsFeedItem
+        const feedItems = await Promise.all(activities.map(async activity => {
+            const user = await this.authService.getUserById(activity.userId);
+            const activityInteractions = this.interactions.get(activity.id) || [];
+            const currentUser = this.authService.getCurrentUser();
+
+            return {
+                ...activity,
+                user: {
+                    id: user!.id,
+                    name: user!.displayName,
+                    avatarUrl: user!.photoURL
+                },
+                interactions: {
+                    likes: activityInteractions.filter(i => i.type === InteractionType.Like).length,
+                    comments: activityInteractions.filter(i => i.type === InteractionType.Comment).length,
+                    hasLiked: currentUser ? activityInteractions.some(i => 
+                        i.type === InteractionType.Like && i.userId === currentUser.id
+                    ) : false
+                }
+            };
+        }));
+
+        return feedItems;
     }
 
-    // Interaction Management
     public async likeActivity(activityId: string): Promise<void> {
         const currentUser = this.authService.getCurrentUser();
         if (!currentUser) {
             throw new Error('Must be logged in to like activities');
         }
 
-        const interactions = this.interactions.get(activityId) || [];
-        const existingLike = interactions.find(i => 
-            i.type === InteractionType.Like && i.userId === currentUser.id
-        );
+        const interaction: ActivityInteraction = {
+            id: Date.now().toString(),
+            activityId,
+            userId: currentUser.id,
+            type: InteractionType.Like,
+            timestamp: new Date()
+        };
 
-        if (!existingLike) {
-            interactions.push({
-                id: Date.now().toString(),
-                activityId,
-                userId: currentUser.id,
-                type: InteractionType.Like,
-                timestamp: new Date()
-            });
-            this.interactions.set(activityId, interactions);
-            await this.updateNewsFeed();
-        }
+        const activityInteractions = this.interactions.get(activityId) || [];
+        activityInteractions.push(interaction);
+        this.interactions.set(activityId, activityInteractions);
     }
 
     public async unlikeActivity(activityId: string): Promise<void> {
@@ -205,16 +177,11 @@ export class SocialService {
             throw new Error('Must be logged in to unlike activities');
         }
 
-        const interactions = this.interactions.get(activityId) || [];
-        const likeIndex = interactions.findIndex(i => 
-            i.type === InteractionType.Like && i.userId === currentUser.id
+        let activityInteractions = this.interactions.get(activityId) || [];
+        activityInteractions = activityInteractions.filter(i => 
+            !(i.type === InteractionType.Like && i.userId === currentUser.id)
         );
-
-        if (likeIndex !== -1) {
-            interactions.splice(likeIndex, 1);
-            this.interactions.set(activityId, interactions);
-            await this.updateNewsFeed();
-        }
+        this.interactions.set(activityId, activityInteractions);
     }
 
     public async commentOnActivity(activityId: string, content: string): Promise<ActivityInteraction> {
@@ -223,7 +190,7 @@ export class SocialService {
             throw new Error('Must be logged in to comment on activities');
         }
 
-        const comment: ActivityInteraction = {
+        const interaction: ActivityInteraction = {
             id: Date.now().toString(),
             activityId,
             userId: currentUser.id,
@@ -232,111 +199,46 @@ export class SocialService {
             timestamp: new Date()
         };
 
+        const activityInteractions = this.interactions.get(activityId) || [];
+        activityInteractions.push(interaction);
+        this.interactions.set(activityId, activityInteractions);
+
+        return interaction;
+    }
+
+    public async getActivityComments(activityId: string): Promise<ActivityInteraction[]> {
         const interactions = this.interactions.get(activityId) || [];
-        interactions.push(comment);
-        this.interactions.set(activityId, interactions);
-        await this.updateNewsFeed();
-
-        return comment;
+        return interactions.filter(i => i.type === InteractionType.Comment);
     }
 
-    // Privacy Settings Management
-    public async getPrivacySettings(userId: string): Promise<PrivacySettings> {
-        return this.privacySettings.get(userId) || {
-            userId,
-            isPrivateProfile: false,
-            requireFollowApproval: false,
-            showReadingProgress: true,
-            showReviews: true,
-            showClubMembership: true,
-            showChallenges: true,
-            allowActivityFeedComments: true,
-            allowDirectMessages: true
-        };
-    }
+    // Follow Suggestions
+    public async getFollowSuggestions(userId: string): Promise<FollowSuggestion[]> {
+        const following = await this.getFollowing(userId);
+        const followingIds = new Set(following.map(f => f.followingId));
+        const allUsers = await this.authService.searchUsers('');
+        
+        const suggestions = await Promise.all(
+            allUsers
+                .filter(user => user.id !== userId && !followingIds.has(user.id))
+                .map(async user => {
+                    const stats = await this.getFollowStats(user.id);
+                    const activities = await this.getActivities({ userId: user.id, isPublic: true });
+                    
+                    return {
+                        userId: user.id,
+                        name: user.displayName,
+                        avatarUrl: user.photoURL,
+                        bio: user.bio,
+                        mutualFollowers: stats.mutualFollowersCount,
+                        recentActivity: activities[0],
+                        commonInterests: {
+                            genres: user.favoriteGenres,
+                            authors: user.favoriteAuthors
+                        }
+                    };
+                })
+        );
 
-    public async updatePrivacySettings(settings: PrivacySettings): Promise<void> {
-        const currentUser = this.authService.getCurrentUser();
-        if (!currentUser || currentUser.id !== settings.userId) {
-            throw new Error('Can only update own privacy settings');
-        }
-
-        this.privacySettings.set(currentUser.id, settings);
-    }
-
-    // Follow Request Management
-    private async createFollowRequest(requesterId: string, targetId: string): Promise<void> {
-        const request: FollowRequest = {
-            id: Date.now().toString(),
-            requesterId,
-            targetId,
-            status: FollowRequestStatus.Pending,
-            createdAt: new Date(),
-            updatedAt: new Date()
-        };
-
-        const requests = this.followRequests.get(targetId) || [];
-        requests.push(request);
-        this.followRequests.set(targetId, requests);
-    }
-
-    private async createFollowRelationship(followerId: string, followingId: string): Promise<void> {
-        const following: Following = {
-            id: Date.now().toString(),
-            followerId,
-            followingId,
-            createdAt: new Date()
-        };
-
-        // Update following list
-        const userFollowing = this.following.get(followerId) || [];
-        userFollowing.push(following);
-        this.following.set(followerId, userFollowing);
-
-        // Update followers list
-        const targetFollowers = this.followers.get(followingId) || [];
-        targetFollowers.push(following);
-        this.followers.set(followingId, targetFollowers);
-
-        await this.updateNewsFeed();
-    }
-
-    // Helper Methods
-    private async updateNewsFeed(): Promise<void> {
-        const feedItems = await this.getNewsFeed();
-        this.newsFeedSubject.next(feedItems);
-    }
-
-    private filterActivities(activities: UserActivity[], filter?: ActivityFilter): UserActivity[] {
-        if (!filter) return activities;
-
-        return activities.filter(activity => {
-            if (filter.types && !filter.types.includes(activity.type)) return false;
-            if (filter.userId && activity.userId !== filter.userId) return false;
-            if (filter.isPublic !== undefined && activity.isPublic !== filter.isPublic) return false;
-            if (filter.startDate && activity.timestamp < filter.startDate) return false;
-            if (filter.endDate && activity.timestamp > filter.endDate) return false;
-            return true;
-        });
-    }
-
-    private filterNewsFeedItems(items: NewsFeedItem[], filter?: NewsFeedFilter): NewsFeedItem[] {
-        if (!filter) return items;
-
-        return items.filter(item => {
-            if (filter.types && !filter.types.includes(item.type)) return false;
-            if (filter.startDate && item.timestamp < filter.startDate) return false;
-            if (filter.endDate && item.timestamp > filter.endDate) return false;
-            return true;
-        });
-    }
-
-    // Observable Getters
-    public get newsFeed$(): Observable<NewsFeedItem[]> {
-        return this.newsFeedSubject.asObservable();
-    }
-
-    public get notifications$(): Observable<ActivityNotification[]> {
-        return this.notificationsSubject.asObservable();
+        return suggestions.sort((a, b) => b.mutualFollowers - a.mutualFollowers);
     }
 }

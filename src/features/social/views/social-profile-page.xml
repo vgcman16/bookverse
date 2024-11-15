@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="page">
+    <ActionBar class="action-bar">
+        <NavigationButton android.systemIcon="ic_menu_back" />
+        <Label text="{{ user.displayName }}" class="action-bar-title" />
+        <ActionItem ios.position="right" 
+                   android.position="actionBar"
+                   visibility="{{ isCurrentUser ? 'visible' : 'collapsed' }}"
+                   tap="{{ onEditProfile }}">
+            <Label text="Edit" class="action-item" />
+        </ActionItem>
+    </ActionBar>
+
+    <GridLayout rows="auto, *">
+        <!-- Profile Header -->
+        <StackLayout row="0" class="profile-header">
+            <GridLayout columns="*, auto" class="user-info">
+                <StackLayout col="0">
+                    <Image src="{{ user.photoURL }}" 
+                           class="profile-image"
+                           width="80" height="80" />
+                    <Label text="{{ user.displayName }}" 
+                           class="profile-name" />
+                    <Label text="{{ user.bio }}" 
+                           class="profile-bio"
+                           textWrap="true"
+                           visibility="{{ user.bio ? 'visible' : 'collapsed' }}" />
+                </StackLayout>
+                
+                <Button col="1" 
+                        text="{{ isFollowing ? 'Following' : 'Follow' }}"
+                        tap="{{ onToggleFollow }}"
+                        class="{{ isFollowing ? 'btn-following' : 'btn-follow' }}"
+                        visibility="{{ !isCurrentUser ? 'visible' : 'collapsed' }}" />
+            </GridLayout>
+
+            <!-- Stats -->
+            <GridLayout columns="*, *, *" class="stats-container">
+                <StackLayout col="0" tap="{{ onShowBooks }}" class="stat-item">
+                    <Label text="{{ stats.totalBooksRead }}" class="stat-number" />
+                    <Label text="Books" class="stat-label" />
+                </StackLayout>
+                <StackLayout col="1" tap="{{ onShowFollowers }}" class="stat-item">
+                    <Label text="{{ stats.followersCount }}" class="stat-number" />
+                    <Label text="Followers" class="stat-label" />
+                </StackLayout>
+                <StackLayout col="2" tap="{{ onShowFollowing }}" class="stat-item">
+                    <Label text="{{ stats.followingCount }}" class="stat-number" />
+                    <Label text="Following" class="stat-label" />
+                </StackLayout>
+            </GridLayout>
+        </StackLayout>
+
+        <!-- Activity Feed -->
+        <TabView row="1" selectedIndex="{{ selectedTabIndex }}" class="activity-tabs">
+            <TabView.items>
+                <TabViewItem title="Activity">
+                    <TabViewItem.view>
+                        <GridLayout>
+                            <ListView items="{{ activities }}" 
+                                    class="activity-list"
+                                    visibility="{{ !isLoading }}">
+                                <ListView.itemTemplate>
+                                    <GridLayout rows="auto" columns="auto, *" class="activity-item">
+                                        <Image row="0" col="0" 
+                                               src="{{ user.photoURL }}"
+                                               class="activity-avatar" />
+                                        <StackLayout row="0" col="1" class="activity-content">
+                                            <Label text="{{ message }}" 
+                                                   textWrap="true"
+                                                   class="activity-message" />
+                                            <Label text="{{ timestamp | timeAgo }}"
+                                                   class="activity-time" />
+                                            
+                                            <!-- Activity Details -->
+                                            <GridLayout rows="auto" columns="*"
+                                                      visibility="{{ hasDetails ? 'visible' : 'collapsed' }}"
+                                                      class="activity-details">
+                                                <!-- Book Activity -->
+                                                <StackLayout visibility="{{ type === 'bookStarted' || type === 'bookFinished' ? 'visible' : 'collapsed' }}"
+                                                           tap="{{ onBookTap }}"
+                                                           class="book-activity">
+                                                    <Image src="{{ data.bookCover }}"
+                                                           class="book-cover" />
+                                                    <Label text="{{ data.bookTitle }}"
+                                                           class="book-title" />
+                                                </StackLayout>
+
+                                                <!-- Review Activity -->
+                                                <StackLayout visibility="{{ type === 'reviewPosted' ? 'visible' : 'collapsed' }}"
+                                                           tap="{{ onReviewTap }}"
+                                                           class="review-activity">
+                                                    <Label text="{{ data.reviewText }}"
+                                                           textWrap="true"
+                                                           class="review-text" />
+                                                    <GridLayout columns="auto, *" class="review-info">
+                                                        <Label col="0" text="{{ data.rating | stars }}"
+                                                               class="review-rating" />
+                                                        <Label col="1" text="{{ data.bookTitle }}"
+                                                               class="review-book-title" />
+                                                    </GridLayout>
+                                                </StackLayout>
+
+                                                <!-- Challenge Activity -->
+                                                <StackLayout visibility="{{ type === 'challengeCompleted' ? 'visible' : 'collapsed' }}"
+                                                           tap="{{ onChallengeTap }}"
+                                                           class="challenge-activity">
+                                                    <Label text="{{ data.challengeTitle }}"
+                                                           class="challenge-title" />
+                                                    <ProgressBar value="{{ data.progress }}"
+                                                               maxValue="100"
+                                                               class="challenge-progress" />
+                                                </StackLayout>
+                                            </GridLayout>
+
+                                            <!-- Interactions -->
+                                            <GridLayout columns="auto, auto, *" class="activity-interactions">
+                                                <Button col="0" 
+                                                        text="{{ interactions.hasLiked ? '❤️' : '🤍' }} {{ interactions.likes }}"
+                                                        tap="{{ onLike }}"
+                                                        class="interaction-btn" />
+                                                <Button col="1"
+                                                        text="💬 {{ interactions.comments }}"
+                                                        tap="{{ onComment }}"
+                                                        class="interaction-btn" />
+                                            </GridLayout>
+                                        </StackLayout>
+                                    </GridLayout>
+                                </ListView.itemTemplate>
+                            </ListView>
+
+                            <!-- Loading State -->
+                            <ActivityIndicator busy="{{ isLoading }}" 
+                                             class="activity-indicator" />
+
+                            <!-- Empty State -->
+                            <StackLayout visibility="{{ !isLoading && activities.length === 0 ? 'visible' : 'collapsed' }}"
+                                       class="empty-state">
+                                <Label text="📚" class="empty-icon" />
+                                <Label text="No activity yet" class="empty-title" />
+                                <Label text="Activities will appear here when the user starts reading books, writing reviews, or completing challenges."
+                                       textWrap="true"
+                                       class="empty-message" />
+                            </StackLayout>
+                        </GridLayout>
+                    </TabViewItem.view>
+                </TabViewItem>
+
+                <TabViewItem title="Books">
+                    <TabViewItem.view>
+                        <GridLayout>
+                            <ListView items="{{ books }}"
+                                    class="books-list"
+                                    visibility="{{ !isLoading }}">
+                                <ListView.itemTemplate>
+                                    <GridLayout columns="auto, *" class="book-item">
+                                        <Image col="0" src="{{ coverUrl }}"
+                                               class="book-cover" />
+                                        <StackLayout col="1" class="book-info">
+                                            <Label text="{{ title }}" class="book-title" />
+                                            <Label text="{{ author }}" class="book-author" />
+                                            <Label text="{{ status }}" class="book-status" />
+                                            <ProgressBar value="{{ progress }}"
+                                                       maxValue="100"
+                                                       visibility="{{ status === 'Reading' ? 'visible' : 'collapsed' }}"
+                                                       class="reading-progress" />
+                                        </StackLayout>
+                                    </GridLayout>
+                                </ListView.itemTemplate>
+                            </ListView>
+
+                            <!-- Loading State -->
+                            <ActivityIndicator busy="{{ isLoading }}"
+                                             class="activity-indicator" />
+
+                            <!-- Empty State -->
+                            <StackLayout visibility="{{ !isLoading && books.length === 0 ? 'visible' : 'collapsed' }}"
+                                       class="empty-state">
+                                <Label text="📚" class="empty-icon" />
+                                <Label text="No books yet" class="empty-title" />
+                                <Label text="Books will appear here when the user adds them to their library."
+                                       textWrap="true"
+                                       class="empty-message" />
+                            </StackLayout>
+                        </GridLayout>
+                    </TabViewItem.view>
+                </TabViewItem>
+            </TabView.items>
+        </TabView>
+    </GridLayout>
+</Page>
