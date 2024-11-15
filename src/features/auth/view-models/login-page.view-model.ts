@@ -2,6 +2,7 @@ import { Observable } from '@nativescript/core';
 import { AuthService } from '../services/auth.service';
 import { GoogleAuthService } from '../services/google-auth.service';
 import { NavigationService } from '../../../core/services/navigation.service';
+import { User, UserPreferences } from '../models/user.model';
 
 export class LoginPageViewModel extends Observable {
     private authService: AuthService;
@@ -44,10 +45,8 @@ export class LoginPageViewModel extends Observable {
             this.setLoading(true);
             this.clearErrors();
             
-            const user = await this.googleAuthService.signIn().toPromise();
-            if (user) {
-                this.navigateToHome();
-            }
+            await this.googleAuthService.signIn().toPromise();
+            this.navigateToHome();
         } catch (error) {
             this.handleError(error);
         } finally {

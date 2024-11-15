@@ -1,14 +1,13 @@
 import { firebase } from '@nativescript/firebase-core';
-import { 
-    Auth,
-    GoogleAuthProvider,
-    User,
-    UserCredential
-} from '@nativescript/firebase-auth';
-import { AuthService } from './auth.service';
+import { Auth, User as FirebaseUser, UserCredential, GoogleAuthProvider } from '@nativescript/firebase-auth';
 import { Observable, from, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Application, Device, isAndroid, isIOS } from '@nativescript/core';
+import { AuthService } from './auth.service';
+
+// Replace these with your actual client IDs
+const IOS_CLIENT_ID = '{{YOUR_IOS_CLIENT_ID}}';
+const WEB_CLIENT_ID = '{{YOUR_WEB_CLIENT_ID}}';
 
 interface GoogleSignInResult {
     idToken: string;
@@ -33,12 +32,12 @@ declare const UIWindowScene: any;
 
 export class GoogleAuthService {
     private static instance: GoogleAuthService;
-    private authService: AuthService;
     private auth: Auth;
+    private authService: AuthService;
 
     private constructor() {
-        this.authService = AuthService.getInstance();
         this.auth = firebase().auth();
+        this.authService = AuthService.getInstance();
         this.initializeGoogleSignIn();
     }
 
@@ -50,21 +49,16 @@ export class GoogleAuthService {
     }
 
     private async initializeGoogleSignIn(): Promise<void> {
-        try {
-            // Initialize any platform-specific setup if needed
-            if (isAndroid) {
-                // Android-specific initialization
-            } else if (isIOS) {
-                // iOS-specific initialization
-            }
-        } catch (error) {
-            console.error('Failed to initialize Google Sign-In:', error);
+        if (isIOS) {
+            // iOS-specific initialization
+            const signInConfig = GIDConfiguration.alloc().initWithClientID(IOS_CLIENT_ID);
+            GIDSignIn.sharedInstance.configuration = signInConfig;
         }
     }
 
-    public signIn(): Observable<User> {
+    public signIn(): Observable<FirebaseUser> {
         return from(this.signInWithGoogle()).pipe(
-            map(user => user),
+            map(userCredential => userCredential.user),
             catchError(error => {
                 console.error('Google sign-in error:', error);
                 return throwError(() => new Error(this.getErrorMessage(error)));
@@ -72,18 +66,7 @@ export class GoogleAuthService {
         );
     }
 
-    public signOut(): Observable<void> {
-        return from(this.auth.signOut()).pipe(
-            map(() => undefined),
-            tap(() => this.authService.signOut()),
-            catchError(error => {
-                console.error('Google sign-out error:', error);
-                return throwError(() => new Error(this.getErrorMessage(error)));
-            })
-        );
-    }
-
-    private async signInWithGoogle(): Promise<User> {
+    private async signInWithGoogle(): Promise<UserCredential> {
         try {
             // Get Google credentials using native sign-in
             const result = await this.nativeGoogleSignIn();
@@ -105,15 +88,13 @@ export class GoogleAuthService {
                 });
             }
 
-            return userCredential.user;
+            return userCredential;
         } catch (error) {
             throw error;
         }
     }
 
     private async nativeGoogleSignIn(): Promise<GoogleSignInResult> {
-        const WEB_CLIENT_ID = '{{YOUR_WEB_CLIENT_ID}}'; // Replace with your web client ID
-
         if (isAndroid) {
             const activity = Application.android.foregroundActivity || Application.android.startActivity;
             const gso = new com.google.android.gms.auth.api.signin.GoogleSignInOptions.Builder(
@@ -129,12 +110,12 @@ export class GoogleAuthService {
             );
 
             const signInIntent = googleSignInClient.getSignInIntent();
-            
+
             return new Promise<GoogleSignInResult>((resolve, reject) => {
                 const onActivityResult = (args: any) => {
                     if (args.requestCode === 123) {
                         Application.android.off(Application.AndroidApplication.activityResultEvent, onActivityResult);
-                        
+
                         const task = com.google.android.gms.auth.api.signin.GoogleSignIn.getSignedInAccountFromIntent(args.intent);
                         task.addOnSuccessListener(new com.google.android.gms.tasks.OnSuccessListener({
                             onSuccess: (account: any) => {
@@ -195,12 +176,6 @@ export class GoogleAuthService {
                 return 'This account has been disabled. Please contact support.';
             case 'auth/user-not-found':
                 return 'No account found with these credentials.';
-            case 'auth/wrong-password':
-                return 'Invalid password. Please try again.';
-            case 'auth/invalid-verification-code':
-                return 'Invalid verification code. Please try again.';
-            case 'auth/invalid-verification-id':
-                return 'Invalid verification ID. Please try again.';
             case 'sign_in_cancelled':
                 return 'Google sign-in was cancelled.';
             case 'sign_in_failed':
@@ -212,7 +187,7 @@ export class GoogleAuthService {
         }
     }
 
-    public getCurrentUser(): Promise<User | null> {
+    public getCurrentUser(): Promise<FirebaseUser | null> {
         return Promise.resolve(this.auth.currentUser);
     }
 

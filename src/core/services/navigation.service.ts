@@ -1,4 +1,4 @@
-import { Frame, NavigationEntry, BackstackEntry, Page } from '@nativescript/core';
+import { Frame, NavigationEntry, BackstackEntry } from '@nativescript/core';
 
 export interface NavigationOptions extends NavigationEntry {
     clearHistory?: boolean;
@@ -20,8 +20,8 @@ export interface NavigationOptions extends NavigationEntry {
 
 export class NavigationService {
     private static instance: NavigationService;
-    private static frame: Frame;
     private static navigationStack: string[] = [];
+    private static frame: Frame | null = null;
 
     private constructor() {}
 
@@ -30,6 +30,14 @@ export class NavigationService {
             NavigationService.instance = new NavigationService();
         }
         return NavigationService.instance;
+    }
+
+    public static setFrame(frame: Frame): void {
+        NavigationService.frame = frame;
+    }
+
+    public static getFrame(): Frame {
+        return NavigationService.frame || Frame.topmost();
     }
 
     public static navigate(path: string, options: Partial<NavigationOptions> = {}): void {
@@ -63,6 +71,10 @@ export class NavigationService {
             NavigationService.navigationStack.pop();
             Frame.topmost().goBack();
         }
+    }
+
+    public static goBack(): void {
+        NavigationService.back();
     }
 
     public static getCurrentRoute(): string {
@@ -121,19 +133,6 @@ export class NavigationService {
         Frame.topmost().navigate(navigationEntry);
     }
 
-    public static setFrame(frame: Frame): void {
-        NavigationService.frame = frame;
-    }
-
-    public static getFrame(): Frame {
-        return NavigationService.frame || Frame.topmost();
-    }
-
-    // Alias methods for consistency
-    public static goBack(): void {
-        NavigationService.back();
-    }
-
     public static navigateToLogin(): void {
         NavigationService.navigate('features/auth/views/login-page', { clearHistory: true });
     }
@@ -180,7 +179,7 @@ export class NavigationService {
     }
 
     public goBack(): void {
-        NavigationService.goBack();
+        NavigationService.back();
     }
 
     public navigateToLogin(): void {

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="page">
     <ActionBar title="Login" class="action-bar">
         <NavigationButton visibility="collapsed" />
@@ -6,88 +5,84 @@
 
     <ScrollView>
         <StackLayout class="p-20">
-            <Image src="~/assets/images/logo.png" class="logo m-b-30" />
-            
-            <Label text="Welcome back!" class="h1 text-center m-b-20" />
-            
-            <!-- Email Input -->
-            <StackLayout class="input-field m-b-20">
-                <Label text="Email" class="input-label" />
-                <TextField id="email-input"
-                          text="{{ email }}"
-                          keyboardType="email"
-                          autocorrect="false"
-                          autocapitalizationType="none"
-                          class="input" />
-                <Label text="{{ emailError }}" 
-                       class="error-message"
-                       visibility="{{ emailError ? 'visible' : 'collapsed' }}" />
-            </StackLayout>
+            <!-- Logo -->
+            <Image src="~/assets/images/logo.png" class="logo" stretch="aspectFit" />
 
-            <!-- Password Input -->
-            <StackLayout class="input-field m-b-20">
-                <Label text="Password" class="input-label" />
-                <TextField id="password-input"
-                          text="{{ password }}"
-                          secure="true"
-                          class="input" />
-                <Label text="{{ passwordError }}"
-                       class="error-message"
-                       visibility="{{ passwordError ? 'visible' : 'collapsed' }}" />
-            </StackLayout>
-
-            <!-- Remember Me & Forgot Password -->
-            <GridLayout rows="auto" columns="*, *" class="m-b-20">
-                <StackLayout orientation="horizontal" col="0">
-                    <Switch checked="{{ rememberMe }}" />
-                    <Label text="Remember me" class="m-l-5" />
+            <!-- Form -->
+            <StackLayout class="form">
+                <!-- Email -->
+                <StackLayout class="input-field">
+                    <Label text="Email" class="label" />
+                    <TextField text="{{ email }}" 
+                             hint="Enter your email" 
+                             keyboardType="email" 
+                             autocorrect="false" 
+                             autocapitalizationType="none" 
+                             class="input" />
+                    <Label text="{{ emailError }}" class="error-message" visibility="{{ emailError ? 'visible' : 'collapsed' }}" />
                 </StackLayout>
-                <Label text="Forgot Password?"
-                       class="text-right"
-                       col="1"
-                       tap="{{ onForgotPassword }}" />
-            </GridLayout>
 
-            <!-- Login Button -->
-            <Button id="login-button"
-                    text="Login"
-                    tap="{{ onLogin }}"
-                    isEnabled="{{ !isLoading }}"
-                    class="btn btn-primary m-b-20" />
+                <!-- Password -->
+                <StackLayout class="input-field">
+                    <Label text="Password" class="label" />
+                    <TextField text="{{ password }}" 
+                             hint="Enter your password" 
+                             secure="true" 
+                             class="input" />
+                    <Label text="{{ passwordError }}" class="error-message" visibility="{{ passwordError ? 'visible' : 'collapsed' }}" />
+                </StackLayout>
 
-            <!-- Google Sign In -->
-            <Button id="google-login-button"
-                    text="Sign in with Google"
-                    tap="{{ onGoogleLogin }}"
-                    isEnabled="{{ !isLoading }}"
-                    class="btn btn-outline m-b-20">
-                <FormattedString>
-                    <Span text="&#xf1a0; " class="fab" />
-                    <Span text="Sign in with Google" />
-                </FormattedString>
-            </Button>
+                <!-- Remember Me -->
+                <GridLayout columns="auto, *" class="remember-me">
+                    <Switch checked="{{ rememberMe }}" col="0" />
+                    <Label text="Remember me" col="1" class="m-l-10" />
+                </GridLayout>
 
-            <!-- Sign Up Link -->
-            <StackLayout orientation="horizontal" horizontalAlignment="center">
-                <Label text="Don't have an account? " />
-                <Label text="Sign up"
-                       id="signup-link"
-                       tap="{{ onSignUp }}"
-                       class="font-weight-bold" />
+                <!-- Error Message -->
+                <Label text="{{ errorMessage }}" 
+                       class="error-message text-center" 
+                       textWrap="true"
+                       visibility="{{ errorMessage ? 'visible' : 'collapsed' }}" />
+
+                <!-- Login Button -->
+                <Button text="Login" 
+                        tap="{{ onLogin }}" 
+                        class="btn btn-primary" 
+                        isEnabled="{{ !isLoading }}" />
+
+                <!-- Separator -->
+                <StackLayout class="separator-container m-y-20">
+                    <GridLayout columns="*, auto, *" class="m-x-20">
+                        <StackLayout col="0" class="hr-light"></StackLayout>
+                        <Label col="1" text="or" class="separator m-x-10" />
+                        <StackLayout col="2" class="hr-light"></StackLayout>
+                    </GridLayout>
+                </StackLayout>
+
+                <!-- Google Sign In -->
+                <GridLayout columns="auto, *" class="btn btn-google" tap="{{ onGoogleLogin }}" isEnabled="{{ !isLoading }}">
+                    <Image src="~/assets/images/google-logo.png" col="0" class="m-r-10" />
+                    <Label text="Sign in with Google" col="1" />
+                </GridLayout>
+
+                <!-- Loading Indicator -->
+                <ActivityIndicator busy="{{ isLoading }}" 
+                                 visibility="{{ isLoading ? 'visible' : 'collapsed' }}" 
+                                 class="activity-indicator" />
+
+                <!-- Links -->
+                <GridLayout rows="auto" columns="*, auto, *" class="links">
+                    <Label text="Forgot Password?" 
+                           tap="{{ onForgotPassword }}" 
+                           class="link" 
+                           col="0" />
+                    <Label text="|" class="separator" col="1" />
+                    <Label text="Sign Up" 
+                           tap="{{ onSignUp }}" 
+                           class="link" 
+                           col="2" />
+                </GridLayout>
             </StackLayout>
-
-            <!-- Loading Indicator -->
-            <ActivityIndicator busy="{{ isLoading }}"
-                             visibility="{{ isLoading ? 'visible' : 'collapsed' }}"
-                             class="m-t-20" />
-
-            <!-- Error Message -->
-            <Label id="login-error"
-                   text="{{ errorMessage }}"
-                   class="error-message text-center"
-                   textWrap="true"
-                   visibility="{{ errorMessage ? 'visible' : 'collapsed' }}"
-                   margin="10" />
         </StackLayout>
     </ScrollView>
 </Page>
