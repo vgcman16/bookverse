@@ -169,7 +169,7 @@ A comprehensive mobile application for book lovers built with NativeScript and T
 - ✅ Social System Implementation
 - ✅ Notification System Implementation
 - ✅ Unit Testing Setup
-- ⬜ E2E Testing Setup
+- ✅ E2E Testing Setup
 - ⬜ CI/CD Pipeline
 
 ### Additional Features
@@ -277,7 +277,14 @@ ns build ios --release
 ### Running Tests
 
 ```bash
+# Run unit tests
 npm test
+
+# Run E2E tests on iOS simulator
+npm run e2e:ios
+
+# Run E2E tests on Android emulator
+npm run e2e:android
 ```
 
 ## 📱 Platform-Specific Notes
