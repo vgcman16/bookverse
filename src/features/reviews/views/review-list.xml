@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout rows="auto, *">
+    <!-- Review Stats -->
+    <GridLayout row="0" columns="auto, *" class="review-stats">
+        <StackLayout col="0" class="rating-summary">
+            <Label text="{{ averageRating }}" class="average-rating" />
+            <StackLayout orientation="horizontal" class="star-rating">
+                <Repeater items="{{ ratingStars }}">
+                    <Repeater.itemTemplate>
+                        <Label text="{{ $value }}" class="star" />
+                    </Repeater.itemTemplate>
+                </Repeater>
+            </StackLayout>
+            <Label text="{{ totalReviews + ' reviews' }}" class="review-count" />
+        </StackLayout>
+
+        <GridLayout col="1" rows="auto, auto, auto, auto, auto" class="rating-distribution">
+            <GridLayout row="0" columns="auto, *, auto" class="rating-bar">
+                <Label text="5" col="0" class="rating-label" />
+                <Progress value="{{ fiveStarPercentage }}" maxValue="100" col="1" class="rating-progress" />
+                <Label text="{{ fiveStarCount }}" col="2" class="rating-count" />
+            </GridLayout>
+            <GridLayout row="1" columns="auto, *, auto" class="rating-bar">
+                <Label text="4" col="0" class="rating-label" />
+                <Progress value="{{ fourStarPercentage }}" maxValue="100" col="1" class="rating-progress" />
+                <Label text="{{ fourStarCount }}" col="2" class="rating-count" />
+            </GridLayout>
+            <GridLayout row="2" columns="auto, *, auto" class="rating-bar">
+                <Label text="3" col="0" class="rating-label" />
+                <Progress value="{{ threeStarPercentage }}" maxValue="100" col="1" class="rating-progress" />
+                <Label text="{{ threeStarCount }}" col="2" class="rating-count" />
+            </GridLayout>
+            <GridLayout row="3" columns="auto, *, auto" class="rating-bar">
+                <Label text="2" col="0" class="rating-label" />
+                <Progress value="{{ twoStarPercentage }}" maxValue="100" col="1" class="rating-progress" />
+                <Label text="{{ twoStarCount }}" col="2" class="rating-count" />
+            </GridLayout>
+            <GridLayout row="4" columns="auto, *, auto" class="rating-bar">
+                <Label text="1" col="0" class="rating-label" />
+                <Progress value="{{ oneStarPercentage }}" maxValue="100" col="1" class="rating-progress" />
+                <Label text="{{ oneStarCount }}" col="2" class="rating-count" />
+            </GridLayout>
+        </GridLayout>
+    </GridLayout>
+
+    <!-- Reviews List -->
+    <ListView row="1" 
+             items="{{ reviews }}" 
+             itemTap="{{ onReviewTap }}"
+             class="reviews-list">
+        <ListView.itemTemplate>
+            <GridLayout rows="auto, auto, auto, auto" class="review-item">
+                <!-- Review Header -->
+                <GridLayout row="0" columns="auto, *, auto" class="review-header">
+                    <Image src="{{ userPhotoUrl }}" 
+                           width="40" height="40"
+                           class="user-avatar"
+                           col="0" />
+                    <StackLayout col="1">
+                        <Label text="{{ userName }}" class="user-name" />
+                        <Label text="{{ formattedDate }}" class="review-date" />
+                    </StackLayout>
+                    <Label text="{{ spoilerAlert ? '⚠️ Spoiler' : '' }}"
+                           visibility="{{ spoilerAlert ? 'visible' : 'collapsed' }}"
+                           class="spoiler-alert"
+                           col="2" />
+                </GridLayout>
+
+                <!-- Rating -->
+                <StackLayout row="1" orientation="horizontal" class="review-rating">
+                    <Repeater items="{{ ratingStars }}">
+                        <Repeater.itemTemplate>
+                            <Label text="{{ $value }}" class="star" />
+                        </Repeater.itemTemplate>
+                    </Repeater>
+                </StackLayout>
+
+                <!-- Review Content -->
+                <Label row="2" 
+                       text="{{ review }}" 
+                       textWrap="true"
+                       class="review-content" />
+
+                <!-- Review Actions -->
+                <GridLayout row="3" columns="auto, auto, *" class="review-actions">
+                    <Button text="{{ liked ? '❤️' : '🤍' }} {{ likes }}"
+                            tap="{{ $parents['ReviewListViewModel'].onLikeReview }}"
+                            class="action-button"
+                            col="0" />
+                    <Button text="💬 {{ comments.length }}"
+                            tap="{{ $parents['ReviewListViewModel'].onViewComments }}"
+                            class="action-button"
+                            col="1" />
+                    <Button text="⋮"
+                            tap="{{ $parents['ReviewListViewModel'].onShowReviewOptions }}"
+                            class="options-button"
+                            col="2"
+                            horizontalAlignment="right"
+                            visibility="{{ isCurrentUser ? 'visible' : 'collapsed' }}" />
+                </GridLayout>
+            </GridLayout>
+        </ListView.itemTemplate>
+    </ListView>
+
+    <!-- Empty State -->
+    <StackLayout row="1" 
+                 visibility="{{ !isLoading && reviews.length === 0 ? 'visible' : 'collapsed' }}"
+                 class="empty-state">
+        <Label text="📝" class="empty-icon" />
+        <Label text="No reviews yet" class="empty-message" />
+        <Button text="Write First Review" 
+                tap="{{ onWriteReview }}"
+                class="write-review-button" />
+    </StackLayout>
+
+    <!-- Loading State -->
+    <ActivityIndicator row="1"
+                      busy="{{ isLoading }}" 
+                      visibility="{{ isLoading ? 'visible' : 'collapsed' }}"
+                      class="loading-indicator" />
+
+    <!-- Error State -->
+    <StackLayout row="1"
+                 visibility="{{ errorMessage ? 'visible' : 'collapsed' }}"
+                 class="error-state">
+        <Label text="❌" class="error-icon" />
+        <Label text="{{ errorMessage }}" class="error-message" textWrap="true" />
+        <Button text="Try Again" 
+                tap="{{ onRetry }}"
+                class="retry-button" />
+    </StackLayout>
+
+    <!-- Review Options Modal -->
+    <AbsoluteLayout row="0" rowSpan="2"
+                    visibility="{{ isShowingOptions ? 'visible' : 'collapsed' }}"
+                    class="modal-overlay"
+                    tap="{{ onHideOptions }}">
+        <StackLayout class="options-menu">
+            <Button text="Edit Review" 
+                    tap="{{ onEditReview }}"
+                    class="option-button" />
+            <Button text="Delete Review" 
+                    tap="{{ onDeleteReview }}"
+                    class="option-button delete-button" />
+        </StackLayout>
+    </AbsoluteLayout>
+</GridLayout>
