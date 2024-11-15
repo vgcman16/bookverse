@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="page">
+    <ActionBar title="Search Books" class="action-bar">
+        <NavigationButton visibility="collapsed" />
+    </ActionBar>
+
+    <GridLayout rows="auto, *" class="search-container">
+        <!-- Search Bar -->
+        <GridLayout row="0" columns="*, auto" class="search-bar-container">
+            <TextField col="0"
+                      text="{{ searchQuery }}"
+                      hint="Search books by title, author, or ISBN"
+                      returnKeyType="search"
+                      returnPress="{{ onSearch }}"
+                      class="search-input" />
+            <Button col="1"
+                    text="🔍"
+                    tap="{{ onSearch }}"
+                    class="search-button" />
+        </GridLayout>
+
+        <!-- Filter Chips -->
+        <ScrollView row="1" orientation="horizontal" class="filter-scroll">
+            <WrapLayout class="filter-container">
+                <Label text="Title" 
+                       tap="{{ onFilterTap }}" 
+                       class="{{ activeFilter === 'title' ? 'filter-chip-active' : 'filter-chip' }}" />
+                <Label text="Author" 
+                       tap="{{ onFilterTap }}" 
+                       class="{{ activeFilter === 'author' ? 'filter-chip-active' : 'filter-chip' }}" />
+                <Label text="ISBN" 
+                       tap="{{ onFilterTap }}" 
+                       class="{{ activeFilter === 'isbn' ? 'filter-chip-active' : 'filter-chip' }}" />
+                <Label text="Genre" 
+                       tap="{{ onFilterTap }}" 
+                       class="{{ activeFilter === 'genre' ? 'filter-chip-active' : 'filter-chip' }}" />
+            </WrapLayout>
+        </ScrollView>
+
+        <!-- Results List -->
+        <ListView row="2" 
+                 items="{{ searchResults }}" 
+                 itemTap="{{ onBookTap }}"
+                 class="results-list">
+            <ListView.itemTemplate>
+                <GridLayout columns="auto, *" rows="auto, auto, auto" class="book-item">
+                    <!-- Book Cover -->
+                    <Image src="{{ imageLinks.thumbnail }}" 
+                           width="60" height="90"
+                           class="book-cover"
+                           rowSpan="3" col="0" />
+                    
+                    <!-- Book Details -->
+                    <StackLayout col="1" row="0" class="book-details">
+                        <Label text="{{ title }}" class="book-title" />
+                        <Label text="{{ authors.join(', ') }}" class="book-author" />
+                        <Label text="{{ publishedDate }}" class="book-date" />
+                    </StackLayout>
+
+                    <!-- Rating -->
+                    <GridLayout col="1" row="1" columns="auto, auto" class="rating-container">
+                        <Label text="{{ '⭐'.repeat(Math.round(averageRating || 0)) }}" 
+                               col="0"
+                               class="rating-stars" />
+                        <Label text="{{ '(' + (ratingsCount || 0) + ')' }}" 
+                               col="1"
+                               class="rating-count" />
+                    </GridLayout>
+
+                    <!-- Categories -->
+                    <WrapLayout col="1" row="2" class="categories-container">
+                        <Repeater items="{{ categories }}">
+                            <Repeater.itemTemplate>
+                                <Label text="{{ $value }}" class="category-tag" />
+                            </Repeater.itemTemplate>
+                        </Repeater>
+                    </WrapLayout>
+                </GridLayout>
+            </ListView.itemTemplate>
+        </ListView>
+
+        <!-- Loading Indicator -->
+        <ActivityIndicator busy="{{ isLoading }}" 
+                         visibility="{{ isLoading ? 'visible' : 'collapsed' }}"
+                         row="2"
+                         class="activity-indicator" />
+
+        <!-- Empty State -->
+        <StackLayout row="2" 
+                     visibility="{{ !isLoading && searchResults.length === 0 ? 'visible' : 'collapsed' }}"
+                     class="empty-state">
+            <Label text="📚" class="empty-icon" />
+            <Label text="{{ emptyStateMessage }}" class="empty-message" textWrap="true" />
+        </StackLayout>
+
+        <!-- Error State -->
+        <StackLayout row="2"
+                     visibility="{{ errorMessage ? 'visible' : 'collapsed' }}"
+                     class="error-state">
+            <Label text="❌" class="error-icon" />
+            <Label text="{{ errorMessage }}" class="error-message" textWrap="true" />
+            <Button text="Try Again" 
+                    tap="{{ onRetry }}"
+                    class="retry-button" />
+        </StackLayout>
+
+        <!-- Load More -->
+        <Button row="2" 
+                text="Load More" 
+                tap="{{ onLoadMore }}"
+                class="load-more-button"
+                visibility="{{ canLoadMore ? 'visible' : 'collapsed' }}" />
+    </GridLayout>
+</Page>
