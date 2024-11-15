@@ -21,12 +21,20 @@ interface DiscussionUpdate {
     isLocked?: boolean;
 }
 
+interface EventComment {
+    id: string;
+    content: string;
+    authorId: string;
+    createdAt: Date;
+}
+
 export class ClubService {
     private static instance: ClubService;
     private authService: AuthService;
     private clubs: Map<string, BookClub> = new Map();
     private discussions: Map<string, Map<string, ClubDiscussion>> = new Map(); // clubId -> discussionId -> discussion
-    private events: Map<string, ClubEvent> = new Map();
+    private events: Map<string, Map<string, ClubEvent>> = new Map(); // clubId -> eventId -> event
+    private eventComments: Map<string, EventComment[]> = new Map(); // eventId -> comments
     private challenges: Map<string, ReadingChallenge> = new Map();
     private memberships: Map<string, ClubMembership[]> = new Map(); // userId -> memberships
     private userClubsSubject: BehaviorSubject<BookClub[]>;
@@ -157,7 +165,7 @@ export class ClubService {
 
         await this.saveClub(club);
         await this.updateUserClubs();
-    }
+        }
 
     public async leaveClub(clubId: string): Promise<void> {
         const user = this.authService.getCurrentUser();
@@ -291,6 +299,119 @@ export class ClubService {
         clubDiscussions?.set(discussionId, discussion);
     }
 
+    // Event Management
+    public async createEvent(clubId: string, eventData: Omit<ClubEvent, 'id' | 'createdAt' | 'updatedAt'>): Promise<ClubEvent> {
+        const user = this.authService.getCurrentUser();
+        if (!user) {
+            throw new Error('User must be authenticated to create events');
+        }
+
+        const newEvent: ClubEvent = {
+            ...eventData,
+            id: Date.now().toString(), // TODO: Use proper ID generation
+            createdAt: new Date(),
+            updatedAt: new Date()
+        };
+
+        let clubEvents = this.events.get(clubId);
+        if (!clubEvents) {
+            clubEvents = new Map();
+            this.events.set(clubId, clubEvents);
+        }
+        clubEvents.set(newEvent.id, newEvent);
+
+        return newEvent;
+    }
+
+    public async getEvent(clubId: string, eventId: string): Promise<ClubEvent | null> {
+        const clubEvents = this.events.get(clubId);
+        return clubEvents?.get(eventId) || null;
+    }
+
+    public async updateEvent(clubId: string, eventId: string, updates: Partial<ClubEvent>): Promise<ClubEvent> {
+        const event = await this.getEvent(clubId, eventId);
+        if (!event) {
+            throw new Error('Event not found');
+        }
+
+        const updatedEvent: ClubEvent = {
+            ...event,
+            ...updates,
+            updatedAt: new Date()
+        };
+
+        const clubEvents = this.events.get(clubId);
+        clubEvents?.set(eventId, updatedEvent);
+
+        return updatedEvent;
+    }
+
+    public async deleteEvent(clubId: string, eventId: string): Promise<void> {
+        const clubEvents = this.events.get(clubId);
+        if (!clubEvents) return;
+
+        clubEvents.delete(eventId);
+        if (clubEvents.size === 0) {
+            this.events.delete(clubId);
+        }
+
+        // Clean up comments
+        this.eventComments.delete(eventId);
+    }
+
+    public async updateEventAttendance(clubId: string, eventId: string, status: 'going' | 'maybe' | 'notGoing'): Promise<void> {
+        const user = this.authService.getCurrentUser();
+        if (!user) {
+            throw new Error('User must be authenticated to update attendance');
+        }
+
+        const event = await this.getEvent(clubId, eventId);
+        if (!event) {
+            throw new Error('Event not found');
+        }
+
+        // Remove user from all attendance lists
+        event.attendees.going = event.attendees.going.filter(id => id !== user.id);
+        event.attendees.maybe = event.attendees.maybe.filter(id => id !== user.id);
+        event.attendees.notGoing = event.attendees.notGoing.filter(id => id !== user.id);
+
+        // Add user to selected attendance list
+        event.attendees[status].push(user.id);
+
+        const clubEvents = this.events.get(clubId);
+        clubEvents?.set(eventId, event);
+    }
+
+    public async addEventComment(clubId: string, eventId: string, content: string): Promise<EventComment> {
+        const user = this.authService.getCurrentUser();
+        if (!user) {
+            throw new Error('User must be authenticated to comment');
+        }
+
+        const event = await this.getEvent(clubId, eventId);
+        if (!event) {
+            throw new Error('Event not found');
+        }
+
+        const comment: EventComment = {
+            id: Date.now().toString(),
+            content,
+            authorId: user.id,
+            createdAt: new Date()
+        };
+
+        const comments = this.eventComments.get(eventId) || [];
+        comments.push(comment);
+        this.eventComments.set(eventId, comments);
+
+        return comment;
+    }
+
+    public async getEventComments(eventId: string): Promise<EventComment[]> {
+        return this.eventComments.get(eventId) || [];
+    }
+
+    // Interaction Management
     public async toggleDiscussionLike(clubId: string, discussionId: string): Promise<void> {
         const user = this.authService.getCurrentUser();
         if (!user) {
@@ -439,6 +560,4 @@ export class ClubService {
 
         this.userClubsSubject.next(userClubs.filter((club): club is BookClub => club !== null));
     }
-
-    // Keep existing club-related methods...
 }

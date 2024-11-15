@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="page">
+    <ActionBar class="action-bar">
+        <NavigationButton android.systemIcon="ic_menu_back" />
+        <ActionBar.title>
+            <GridLayout columns="*, auto">
+                <Label col="0" text="{{ event.title }}" class="action-bar-title" textWrap="true" />
+                <Button col="1" 
+                        text="⋮" 
+                        tap="{{ onShowOptions }}"
+                        class="options-button"
+                        visibility="{{ canManageEvent ? 'visible' : 'collapsed' }}" />
+            </GridLayout>
+        </ActionBar.title>
+    </ActionBar>
+
+    <GridLayout rows="*, auto">
+        <!-- Event Content -->
+        <ScrollView row="0">
+            <StackLayout class="event-container">
+                <!-- Event Header -->
+                <GridLayout rows="auto, auto" class="event-header">
+                    <!-- Event Type Badge -->
+                    <Label text="{{ event.type }}" 
+                           class="event-type-badge"
+                           row="0" />
+
+                    <!-- Event Description -->
+                    <Label text="{{ event.description }}" 
+                           textWrap="true"
+                           class="event-description"
+                           row="1" />
+                </GridLayout>
+
+                <!-- Event Details -->
+                <GridLayout rows="auto, auto, auto" class="event-details">
+                    <!-- Date & Time -->
+                    <GridLayout columns="auto, *" row="0" class="detail-row">
+                        <Label text="📅" class="detail-icon" col="0" />
+                        <StackLayout col="1">
+                            <Label text="{{ event.startDate | date }}" class="detail-primary" />
+                            <Label text="{{ event.startDate | time }} - {{ event.endDate | time }}" 
+                                   class="detail-secondary" />
+                        </StackLayout>
+                    </GridLayout>
+
+                    <!-- Location -->
+                    <GridLayout columns="auto, *" row="1" class="detail-row">
+                        <Label text="{{ event.location.type === 'online' ? '🌐' : '📍' }}" 
+                               class="detail-icon"
+                               col="0" />
+                        <Label text="{{ event.location.details }}" 
+                               textWrap="true"
+                               class="detail-text"
+                               col="1" />
+                    </GridLayout>
+
+                    <!-- Book Reference -->
+                    <GridLayout columns="auto, *" 
+                               row="2" 
+                               class="book-reference"
+                               visibility="{{ event.bookId ? 'visible' : 'collapsed' }}">
+                        <Image src="{{ book.imageLinks.thumbnail }}" 
+                               width="40" height="60"
+                               class="book-cover"
+                               col="0" />
+                        <StackLayout col="1">
+                            <Label text="{{ book.title }}" class="book-title" />
+                            <Label text="{{ book.authors.join(', ') }}" class="book-author" />
+                        </StackLayout>
+                    </GridLayout>
+                </GridLayout>
+
+                <!-- Attendees -->
+                <StackLayout class="attendees-section">
+                    <Label text="Attendees" class="section-header" />
+                    
+                    <!-- Attendance Stats -->
+                    <GridLayout columns="*, *, *" class="attendance-stats">
+                        <StackLayout col="0" class="stat-container">
+                            <Label text="{{ event.attendees.going.length }}" class="stat-number going" />
+                            <Label text="Going" class="stat-label" />
+                        </StackLayout>
+                        <StackLayout col="1" class="stat-container">
+                            <Label text="{{ event.attendees.maybe.length }}" class="stat-number maybe" />
+                            <Label text="Maybe" class="stat-label" />
+                        </StackLayout>
+                        <StackLayout col="2" class="stat-container">
+                            <Label text="{{ event.attendees.notGoing.length }}" class="stat-number not-going" />
+                            <Label text="Not Going" class="stat-label" />
+                        </StackLayout>
+                    </GridLayout>
+
+                    <!-- Attendees List -->
+                    <ListView items="{{ attendees }}" class="attendees-list">
+                        <ListView.itemTemplate>
+                            <GridLayout columns="auto, *, auto" class="attendee-item">
+                                <!-- Attendee Avatar -->
+                                <Image src="{{ photoUrl }}" 
+                                       width="40" height="40"
+                                       class="attendee-avatar"
+                                       col="0" />
+                                
+                                <!-- Attendee Info -->
+                                <Label text="{{ displayName }}" 
+                                       class="attendee-name"
+                                       col="1" />
+                                
+                                <!-- Attendance Status -->
+                                <Label text="{{ statusIcon }}" 
+                                       class="status-icon {{ status }}"
+                                       col="2" />
+                            </GridLayout>
+                        </ListView.itemTemplate>
+                    </ListView>
+                </StackLayout>
+
+                <!-- Discussion -->
+                <StackLayout class="discussion-section">
+                    <Label text="Discussion" class="section-header" />
+                    <ListView items="{{ comments }}" class="comments-list">
+                        <ListView.itemTemplate>
+                            <GridLayout rows="auto, auto" class="comment-item">
+                                <!-- Comment Header -->
+                                <GridLayout columns="auto, *" row="0" class="comment-header">
+                                    <Image src="{{ authorPhotoUrl }}" 
+                                           width="32" height="32"
+                                           class="author-avatar-small"
+                                           col="0" />
+                                    <StackLayout col="1">
+                                        <Label text="{{ authorName }}" class="author-name" />
+                                        <Label text="{{ createdAt }}" class="comment-date" />
+                                    </StackLayout>
+                                </GridLayout>
+
+                                <!-- Comment Content -->
+                                <Label text="{{ content }}" 
+                                       textWrap="true"
+                                       class="comment-content"
+                                       row="1" />
+                            </GridLayout>
+                        </ListView.itemTemplate>
+                    </ListView>
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
+
+        <!-- Action Bar -->
+        <GridLayout row="1" 
+                   columns="*, *, *" 
+                   class="action-bar-container">
+            <Button text="Going" 
+                    tap="{{ onUpdateAttendance }}"
+                    class="{{ attendanceStatus === 'going' ? 'action-button-selected' : 'action-button' }}"
+                    col="0" />
+            <Button text="Maybe" 
+                    tap="{{ onUpdateAttendance }}"
+                    class="{{ attendanceStatus === 'maybe' ? 'action-button-selected' : 'action-button' }}"
+                    col="1" />
+            <Button text="Not Going" 
+                    tap="{{ onUpdateAttendance }}"
+                    class="{{ attendanceStatus === 'notGoing' ? 'action-button-selected' : 'action-button' }}"
+                    col="2" />
+        </GridLayout>
+
+        <!-- Comment Input -->
+        <GridLayout row="1" 
+                   columns="*, auto" 
+                   class="comment-input-container"
+                   visibility="{{ isCommentInputVisible ? 'visible' : 'collapsed' }}">
+            <TextView hint="Write a comment..." 
+                     text="{{ newCommentText }}"
+                     class="comment-input"
+                     col="0" />
+            <Button text="Send"
+                    tap="{{ onSendComment }}"
+                    isEnabled="{{ newCommentText.length > 0 }}"
+                    class="send-button"
+                    col="1" />
+        </GridLayout>
+
+        <!-- Options Menu -->
+        <AbsoluteLayout row="0" rowSpan="2"
+                        visibility="{{ isShowingOptions ? 'visible' : 'collapsed' }}"
+                        class="modal-overlay"
+                        tap="{{ onHideOptions }}">
+            <StackLayout class="options-menu">
+                <Button text="Edit Event" 
+                        tap="{{ onEditEvent }}"
+                        class="option-button" />
+                <Button text="Cancel Event" 
+                        tap="{{ onCancelEvent }}"
+                        class="option-button delete-button" />
+            </StackLayout>
+        </AbsoluteLayout>
+    </GridLayout>
+</Page>
