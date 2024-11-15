@@ -9,14 +9,17 @@ A comprehensive mobile application for book lovers built with NativeScript and T
 - ✅ MVVM Implementation
 - ✅ Basic Navigation Structure
 - ✅ Theme Support (Light/Dark)
-- ⬜ Error Handling System
-- ⬜ Logging System
+- ✅ Error Handling System
+- ✅ Firebase Integration
 
 ### Authentication & User Management
-- ⬜ Email/Password Authentication
+- ✅ Email/Password Authentication
+- ✅ User Profile Models
+- ✅ Authentication Service
+- ✅ Login/Signup UI
 - ⬜ Social Media Authentication (Google)
 - ⬜ Social Media Authentication (Facebook)
-- ⬜ User Profile Management
+- ⬜ Profile Management UI
 - ⬜ Avatar Upload System
 - ⬜ Profile Privacy Settings
 
@@ -60,6 +63,7 @@ A comprehensive mobile application for book lovers built with NativeScript and T
 ### User Experience
 - ✅ Responsive Layout
 - ✅ Dark/Light Theme Toggle
+- ✅ Form Validation
 - ⬜ Font Size Adjustment
 - ⬜ Reading Mode
 - ⬜ Accessibility Features
@@ -82,6 +86,7 @@ A comprehensive mobile application for book lovers built with NativeScript and T
 - ✅ Webpack Setup
 - ✅ Git Repository
 - ✅ Project Documentation
+- ✅ Authentication Implementation
 - ⬜ Unit Testing Setup
 - ⬜ E2E Testing Setup
 - ⬜ CI/CD Pipeline
@@ -123,7 +128,11 @@ cd bookverse
 npm install
 ```
 
-3. Run the development server
+3. Set up Firebase configuration
+- Create a Firebase project at [Firebase Console](https://console.firebase.google.com)
+- Add your Firebase configuration in `src/core/config/firebase.config.ts`
+
+4. Run the development server
 ```bash
 # For Android
 ns run android
@@ -218,7 +227,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - NativeScript team for the amazing framework
 - All contributors who participate in this project
-- Book APIs providers for their services
+- Firebase for authentication services
 
 ## 📞 Support
 
