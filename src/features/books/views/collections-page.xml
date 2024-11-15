@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="page">
+    <ActionBar title="My Collections" class="action-bar">
+        <NavigationButton visibility="collapsed" />
+        <ActionBar.actionItems>
+            <ActionItem ios.position="right" 
+                       android.position="actionBar"
+                       tap="{{ onCreateCollection }}">
+                <Label text="+" class="action-item" />
+            </ActionItem>
+        </ActionBar.actionItems>
+    </ActionBar>
+
+    <GridLayout rows="auto, *">
+        <!-- Search Bar -->
+        <SearchBar row="0"
+                  hint="Search collections"
+                  text="{{ searchQuery }}"
+                  submit="{{ onSearch }}"
+                  clear="{{ onClearSearch }}"
+                  class="search-bar" />
+
+        <!-- Collections List -->
+        <ListView row="1" 
+                 items="{{ collections }}" 
+                 itemTap="{{ onCollectionTap }}"
+                 class="collections-list">
+            <ListView.itemTemplate>
+                <GridLayout columns="auto, *, auto" class="collection-item">
+                    <!-- Collection Cover -->
+                    <StackLayout col="0" class="collection-cover">
+                        <Image src="{{ coverImage || '~/assets/images/collection-placeholder.png' }}"
+                               width="60" height="60"
+                               class="collection-image" />
+                        <Label text="{{ books.length }}"
+                               class="book-count" />
+                    </StackLayout>
+
+                    <!-- Collection Info -->
+                    <StackLayout col="1" class="collection-info">
+                        <Label text="{{ name }}" class="collection-name" />
+                        <Label text="{{ description }}" 
+                               class="collection-description"
+                               visibility="{{ description ? 'visible' : 'collapsed' }}"
+                               textWrap="true" />
+                        <Label text="{{ lastUpdated }}" class="collection-date" />
+                    </StackLayout>
+
+                    <!-- Privacy Icon -->
+                    <Label col="2" 
+                           text="{{ isPublic ? '🌍' : '🔒' }}"
+                           class="privacy-icon" />
+                </GridLayout>
+            </ListView.itemTemplate>
+        </ListView>
+
+        <!-- Empty State -->
+        <StackLayout row="1" 
+                     visibility="{{ !isLoading && collections.length === 0 ? 'visible' : 'collapsed' }}"
+                     class="empty-state">
+            <Label text="📚" class="empty-icon" />
+            <Label text="{{ emptyStateMessage }}" class="empty-message" textWrap="true" />
+            <Button text="Create Collection" 
+                    tap="{{ onCreateCollection }}"
+                    class="create-button" />
+        </StackLayout>
+
+        <!-- Loading State -->
+        <ActivityIndicator row="1"
+                          busy="{{ isLoading }}" 
+                          visibility="{{ isLoading ? 'visible' : 'collapsed' }}"
+                          class="loading-indicator" />
+
+        <!-- Error State -->
+        <StackLayout row="1"
+                     visibility="{{ errorMessage ? 'visible' : 'collapsed' }}"
+                     class="error-state">
+            <Label text="❌" class="error-icon" />
+            <Label text="{{ errorMessage }}" class="error-message" textWrap="true" />
+            <Button text="Try Again" 
+                    tap="{{ onRetry }}"
+                    class="retry-button" />
+        </StackLayout>
+
+        <!-- Create Collection Modal -->
+        <AbsoluteLayout row="1" 
+                        visibility="{{ isCreatingCollection ? 'visible' : 'collapsed' }}"
+                        class="modal-overlay">
+            <GridLayout rows="auto, auto, auto, auto, auto" class="modal-content">
+                <Label text="Create Collection" class="modal-title" row="0" />
+                
+                <TextField hint="Collection Name"
+                          text="{{ newCollectionName }}"
+                          class="modal-input"
+                          row="1" />
+                
+                <TextView hint="Description (optional)"
+                         text="{{ newCollectionDescription }}"
+                         class="modal-input description-input"
+                         row="2" />
+                
+                <GridLayout columns="auto, *" class="privacy-toggle" row="3">
+                    <Label text="Make Public" col="0" />
+                    <Switch checked="{{ isNewCollectionPublic }}" col="1" />
+                </GridLayout>
+
+                <GridLayout columns="*, *" row="4" class="modal-buttons">
+                    <Button text="Cancel" 
+                            tap="{{ onCancelCreate }}"
+                            class="modal-button-secondary"
+                            col="0" />
+                    <Button text="Create" 
+                            tap="{{ onConfirmCreate }}"
+                            isEnabled="{{ newCollectionName.length > 0 }}"
+                            class="modal-button-primary"
+                            col="1" />
+                </GridLayout>
+            </GridLayout>
+        </AbsoluteLayout>
+    </GridLayout>
+</Page>
