@@ -170,7 +170,7 @@ A comprehensive mobile application for book lovers built with NativeScript and T
 - ✅ Notification System Implementation
 - ✅ Unit Testing Setup
 - ✅ E2E Testing Setup
-- ⬜ CI/CD Pipeline
+- ✅ CI/CD Pipeline
 
 ### Additional Features
 - ⬜ Voice Search
@@ -286,6 +286,18 @@ npm run e2e:ios
 # Run E2E tests on Android emulator
 npm run e2e:android
 ```
+
+### CI/CD Pipeline
+
+The project uses GitHub Actions for continuous integration and deployment. The pipeline includes:
+
+1. Code validation (linting, formatting, tests)
+2. Building Android and iOS apps
+3. Running E2E tests
+4. Deploying to Google Play Store and TestFlight
+5. Automated notifications
+
+For detailed information about the CI/CD setup, see `.github/workflows/README.md`.
 
 ## 📱 Platform-Specific Notes
 
