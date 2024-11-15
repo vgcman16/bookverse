@@ -168,7 +168,7 @@ A comprehensive mobile application for book lovers built with NativeScript and T
 - ✅ Challenge System Implementation
 - ✅ Social System Implementation
 - ✅ Notification System Implementation
-- ⬜ Unit Testing Setup
+- ✅ Unit Testing Setup
 - ⬜ E2E Testing Setup
 - ⬜ CI/CD Pipeline
 
