@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="page">
+    <ActionBar title="Login" class="action-bar">
+        <NavigationButton visibility="collapsed" />
+    </ActionBar>
+
+    <ScrollView>
+        <StackLayout class="login-container p-20">
+            <!-- Logo and Welcome Message -->
+            <StackLayout class="logo-container text-center p-t-30 p-b-20">
+                <Label text="📚" class="logo-emoji" />
+                <Label text="BookVerse" class="logo-text" />
+                <Label text="Your Personal Book Companion" class="subtitle" />
+            </StackLayout>
+
+            <!-- Login Form -->
+            <GridLayout rows="auto, auto, auto, auto, auto" class="form m-t-20">
+                <!-- Email Input -->
+                <StackLayout row="0" class="input-field m-b-20">
+                    <Label text="Email" class="input-label" />
+                    <TextField text="{{ email }}" 
+                              hint="Enter your email" 
+                              keyboardType="email" 
+                              autocorrect="false" 
+                              autocapitalizationType="none" 
+                              class="input" />
+                </StackLayout>
+
+                <!-- Password Input -->
+                <StackLayout row="1" class="input-field m-b-20">
+                    <Label text="Password" class="input-label" />
+                    <TextField text="{{ password }}" 
+                              hint="Enter your password" 
+                              secure="true" 
+                              class="input" />
+                </StackLayout>
+
+                <!-- Error Message -->
+                <Label row="2" 
+                       text="{{ errorMessage }}" 
+                       class="error-message" 
+                       visibility="{{ errorMessage ? 'visible' : 'collapsed' }}" 
+                       textWrap="true" />
+
+                <!-- Login Button -->
+                <Button row="3" 
+                        text="{{ isLoading ? 'Logging in...' : 'Login' }}" 
+                        tap="{{ onLoginTap }}" 
+                        isEnabled="{{ !isLoading }}" 
+                        class="btn btn-primary m-t-20" />
+
+                <!-- Social Login Options -->
+                <StackLayout row="4" class="social-login m-t-20">
+                    <Label text="Or login with" class="text-center m-b-10" />
+                    <GridLayout columns="*, *" class="social-buttons">
+                        <Button col="0" 
+                                text="Google" 
+                                tap="{{ onGoogleLoginTap }}" 
+                                class="btn btn-outline m-r-5" />
+                        <Button col="1" 
+                                text="Facebook" 
+                                tap="{{ onFacebookLoginTap }}" 
+                                class="btn btn-outline m-l-5" />
+                    </GridLayout>
+                </StackLayout>
+            </GridLayout>
+
+            <!-- Sign Up Link -->
+            <StackLayout class="sign-up-container m-t-30">
+                <Label text="Don't have an account?" class="text-center" />
+                <Label text="Sign Up" tap="{{ onSignUpTap }}" class="sign-up-link text-center" />
+            </StackLayout>
+
+            <!-- Forgot Password Link -->
+            <Label text="Forgot Password?" 
+                   tap="{{ onForgotPasswordTap }}" 
+                   class="forgot-password-link text-center m-t-20" />
+        </StackLayout>
+    </ScrollView>
+</Page>

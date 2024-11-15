@@ -1,22 +1,59 @@
-import { Application } from '@nativescript/core';
-import { AppRootViewModel } from './view-models/app-root.view-model';
+import { Application, Frame } from '@nativescript/core';
+import { initializeFirebase } from '../core/config/firebase.config';
+import { NavigationService } from '../core/services/navigation.service';
+import { AuthService } from '../features/auth/services/auth.service';
 
-// Global app setup and configuration
-class App {
+// Load global styles
+require('./app.css');
+require('../features/auth/styles/auth.css');
+
+export class App {
     private static instance: App;
-    private rootViewModel: AppRootViewModel;
+    private authService: AuthService;
 
     private constructor() {
-        // Initialize root view model
-        this.rootViewModel = new AppRootViewModel();
+        this.authService = AuthService.getInstance();
+        this.initializeApp();
+    }
 
-        // Setup global error handling
-        Application.on(Application.uncaughtErrorEvent, (args: any) => {
-            console.error('Application error:', args.error);
-            // TODO: Implement error reporting service
-        });
+    public static getInstance(): App {
+        if (!App.instance) {
+            App.instance = new App();
+        }
+        return App.instance;
+    }
 
-        // Setup app lifecycle handlers
+    private async initializeApp(): Promise<void> {
+        try {
+            // Initialize Firebase
+            await initializeFirebase();
+
+            // Set up application lifecycle handlers
+            this.setupAppLifecycleListeners();
+
+            // Handle uncaught errors
+            this.setupErrorHandling();
+
+            // Initialize the main frame when the app launches
+            Application.on(Application.launchEvent, (args) => {
+                const rootFrame = args.root as Frame;
+                NavigationService.setMainFrame(rootFrame);
+
+                // Check authentication state and navigate accordingly
+                const isAuthenticated = this.authService.isAuthenticated();
+                if (isAuthenticated) {
+                    NavigationService.navigateToHome();
+                } else {
+                    NavigationService.navigateToLogin();
+                }
+            });
+
+        } catch (error) {
+            console.error('Failed to initialize app:', error);
+        }
+    }
+
+    private setupAppLifecycleListeners(): void {
         Application.on(Application.exitEvent, () => {
             console.log('Application exiting');
             // Cleanup resources
@@ -31,23 +68,24 @@ class App {
             console.log('Application resumed');
             // Handle app resume
         });
+
+        Application.on(Application.lowMemoryEvent, () => {
+            console.log('Low memory warning');
+            // Handle low memory situation
+        });
     }
 
-    public static getInstance(): App {
-        if (!App.instance) {
-            App.instance = new App();
-        }
-        return App.instance;
+    private setupErrorHandling(): void {
+        Application.on(Application.uncaughtErrorEvent, (args) => {
+            console.error('Uncaught error:', args.error);
+            // TODO: Implement error reporting service
+        });
     }
 
-    public getRootViewModel(): AppRootViewModel {
-        return this.rootViewModel;
-    }
-
-    public start() {
+    public start(): void {
         Application.run({ moduleName: 'app-root' });
     }
 }
 
-// Initialize and start the application
+// Start the application
 App.getInstance().start();
