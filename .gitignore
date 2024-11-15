@@ -1,0 +1,67 @@
+# NativeScript
+hooks/
+node_modules/
+platforms/
+dist/
+temp/
+
+# NativeScript Template
+*.js.map
+*.js
+!webpack.config.js
+*.css
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+.env
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Android
+.gradle
+local.properties
+*.iml
+.idea/
+.gradle/
+build/
+captures/
+.externalNativeBuild
+.cxx
+
+# iOS
+Pods/
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.xcuserstate
+project.xcworkspace
+
+# Generated files
+App_Resources/Android/src/main/res/drawable-*/

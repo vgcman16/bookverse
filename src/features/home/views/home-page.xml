@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="page">
+    <ScrollView>
+        <StackLayout class="home-container">
+            <!-- Welcome Section -->
+            <StackLayout class="welcome-section">
+                <Label text="Welcome to BookVerse" class="title" />
+                <Label text="Your personal book companion" class="subtitle" />
+            </StackLayout>
+
+            <!-- Quick Actions -->
+            <GridLayout rows="auto" columns="*, *" class="quick-actions">
+                <Button text="My Library" tap="{{ onMyLibraryTap }}" class="action-button" row="0" col="0" />
+                <Button text="Discover" tap="{{ onDiscoverTap }}" class="action-button" row="0" col="1" />
+            </GridLayout>
+
+            <!-- Reading Progress -->
+            <StackLayout class="reading-progress">
+                <Label text="Currently Reading" class="section-title" />
+                <ListView items="{{ currentlyReading }}" class="book-list">
+                    <ListView.itemTemplate>
+                        <GridLayout columns="auto, *" class="book-item">
+                            <Image src="{{ coverUrl }}" width="60" height="90" class="book-cover" col="0" />
+                            <StackLayout col="1" class="book-details">
+                                <Label text="{{ title }}" class="book-title" />
+                                <Label text="{{ author }}" class="book-author" />
+                                <Progress value="{{ progress }}" maxValue="100" class="reading-progress-bar" />
+                            </StackLayout>
+                        </GridLayout>
+                    </ListView.itemTemplate>
+                </ListView>
+            </StackLayout>
+
+            <!-- Book Clubs -->
+            <StackLayout class="book-clubs">
+                <Label text="Your Book Clubs" class="section-title" />
+                <ListView items="{{ bookClubs }}" class="club-list">
+                    <ListView.itemTemplate>
+                        <GridLayout columns="auto, *" class="club-item">
+                            <Image src="{{ clubImage }}" width="50" height="50" class="club-image" col="0" />
+                            <StackLayout col="1" class="club-details">
+                                <Label text="{{ name }}" class="club-name" />
+                                <Label text="{{ memberCount }} members" class="club-info" />
+                            </StackLayout>
+                        </GridLayout>
+                    </ListView.itemTemplate>
+                </ListView>
+            </StackLayout>
+
+            <!-- Reading Challenges -->
+            <StackLayout class="reading-challenges">
+                <Label text="Reading Challenges" class="section-title" />
+                <GridLayout rows="auto" columns="*, *" class="challenge-grid">
+                    <StackLayout class="challenge-card" row="0" col="0">
+                        <Label text="📚" class="challenge-icon" />
+                        <Label text="Books Read" class="challenge-title" />
+                        <Label text="{{ booksReadCount }}/50" class="challenge-progress" />
+                    </StackLayout>
+                    <StackLayout class="challenge-card" row="0" col="1">
+                        <Label text="⭐" class="challenge-icon" />
+                        <Label text="Reviews Written" class="challenge-title" />
+                        <Label text="{{ reviewsCount }}/30" class="challenge-progress" />
+                    </StackLayout>
+                </GridLayout>
+            </StackLayout>
+        </StackLayout>
+    </ScrollView>
+</Page>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Frame defaultPage="features/home/views/home-page">
+    <Frame.actionBar>
+        <ActionBar title="BookVerse">
+            <NavigationButton visibility="collapsed" />
+            <ActionBar.actionItems>
+                <ActionItem ios.position="right" android.position="actionBar" 
+                    tap="{{ toggleTheme }}">
+                    <ActionItem.actionView>
+                        <Label text="{{ currentTheme === 'dark' ? '☀️' : '🌙' }}" 
+                            class="theme-toggle" />
+                    </ActionItem.actionView>
+                </ActionItem>
+            </ActionBar.actionItems>
+        </ActionBar>
+    </Frame.actionBar>
+</Frame>
