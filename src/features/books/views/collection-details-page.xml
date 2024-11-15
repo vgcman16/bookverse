@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="page">
+    <ActionBar class="action-bar">
+        <NavigationButton android.systemIcon="ic_menu_back" />
+        <ActionBar.title>
+            <GridLayout columns="*, auto">
+                <Label col="0" text="{{ collection.name }}" class="action-bar-title" textWrap="true" />
+                <Button col="1" 
+                        text="⋮" 
+                        tap="{{ onShowOptions }}"
+                        class="options-button" />
+            </GridLayout>
+        </ActionBar.title>
+    </ActionBar>
+
+    <GridLayout rows="auto, auto, *">
+        <!-- Collection Info -->
+        <StackLayout row="0" class="collection-header">
+            <Label text="{{ collection.description }}" 
+                   class="collection-description"
+                   visibility="{{ collection.description ? 'visible' : 'collapsed' }}"
+                   textWrap="true" />
+            <GridLayout columns="auto, auto, *" class="collection-stats">
+                <Label text="{{ collection.books.length + ' Books' }}" 
+                       class="stat-label"
+                       col="0" />
+                <Label text="{{ collection.isPublic ? '🌍 Public' : '🔒 Private' }}" 
+                       class="stat-label"
+                       col="1" />
+                <Label text="{{ 'Updated ' + collection.lastUpdated }}" 
+                       class="stat-label update-date"
+                       col="2" />
+            </GridLayout>
+        </StackLayout>
+
+        <!-- Search Bar -->
+        <SearchBar row="1"
+                  hint="Search books in collection"
+                  text="{{ searchQuery }}"
+                  submit="{{ onSearch }}"
+                  clear="{{ onClearSearch }}"
+                  class="search-bar" />
+
+        <!-- Books List -->
+        <ListView row="2" 
+                 items="{{ books }}" 
+                 itemTap="{{ onBookTap }}"
+                 class="books-list">
+            <ListView.itemTemplate>
+                <GridLayout columns="auto, *, auto" class="book-item">
+                    <!-- Book Cover -->
+                    <Image src="{{ imageLinks.thumbnail }}" 
+                           width="60" height="90"
+                           class="book-cover"
+                           col="0" />
+
+                    <!-- Book Info -->
+                    <StackLayout col="1" class="book-info">
+                        <Label text="{{ title }}" class="book-title" textWrap="true" />
+                        <Label text="{{ authors.join(', ') }}" class="book-author" textWrap="true" />
+                        <GridLayout columns="auto, auto" class="rating-container">
+                            <Label text="{{ '⭐'.repeat(Math.round(averageRating || 0)) }}" 
+                                   col="0"
+                                   class="rating-stars" />
+                            <Label text="{{ '(' + (ratingsCount || 0) + ')' }}" 
+                                   col="1"
+                                   class="rating-count" />
+                        </GridLayout>
+                    </StackLayout>
+
+                    <!-- Remove Button -->
+                    <Button text="✕" 
+                            tap="{{ $parents['CollectionDetailsViewModel'].onRemoveBook }}"
+                            class="remove-button"
+                            col="2" />
+                </GridLayout>
+            </ListView.itemTemplate>
+        </ListView>
+
+        <!-- Empty State -->
+        <StackLayout row="2" 
+                     visibility="{{ !isLoading && books.length === 0 ? 'visible' : 'collapsed' }}"
+                     class="empty-state">
+            <Label text="📚" class="empty-icon" />
+            <Label text="{{ emptyStateMessage }}" class="empty-message" textWrap="true" />
+            <Button text="Add Books" 
+                    tap="{{ onAddBooks }}"
+                    class="add-button" />
+        </StackLayout>
+
+        <!-- Loading State -->
+        <ActivityIndicator row="2"
+                          busy="{{ isLoading }}" 
+                          visibility="{{ isLoading ? 'visible' : 'collapsed' }}"
+                          class="loading-indicator" />
+
+        <!-- Error State -->
+        <StackLayout row="2"
+                     visibility="{{ errorMessage ? 'visible' : 'collapsed' }}"
+                     class="error-state">
+            <Label text="❌" class="error-icon" />
+            <Label text="{{ errorMessage }}" class="error-message" textWrap="true" />
+            <Button text="Try Again" 
+                    tap="{{ onRetry }}"
+                    class="retry-button" />
+        </StackLayout>
+
+        <!-- Options Menu -->
+        <AbsoluteLayout row="0" rowSpan="3"
+                        visibility="{{ isShowingOptions ? 'visible' : 'collapsed' }}"
+                        class="options-overlay"
+                        tap="{{ onHideOptions }}">
+            <StackLayout class="options-menu">
+                <Button text="Edit Collection" 
+                        tap="{{ onEditCollection }}"
+                        class="option-button" />
+                <Button text="Change Privacy" 
+                        tap="{{ onTogglePrivacy }}"
+                        class="option-button" />
+                <Button text="Delete Collection" 
+                        tap="{{ onDeleteCollection }}"
+                        class="option-button delete-button" />
+            </StackLayout>
+        </AbsoluteLayout>
+
+        <!-- Add Books Modal -->
+        <AbsoluteLayout row="0" rowSpan="3"
+                        visibility="{{ isAddingBooks ? 'visible' : 'collapsed' }}"
+                        class="modal-overlay">
+            <GridLayout rows="auto, *, auto" class="modal-content">
+                <Label text="Add Books" class="modal-title" row="0" />
+                
+                <ListView items="{{ availableBooks }}" 
+                         row="1"
+                         class="available-books-list">
+                    <ListView.itemTemplate>
+                        <GridLayout columns="*, auto" class="available-book-item">
+                            <StackLayout col="0">
+                                <Label text="{{ title }}" class="book-title" textWrap="true" />
+                                <Label text="{{ authors.join(', ') }}" class="book-author" textWrap="true" />
+                            </StackLayout>
+                            <Button text="{{ isSelected ? '✓' : '+' }}" 
+                                    tap="{{ $parents['CollectionDetailsViewModel'].onToggleBookSelection }}"
+                                    class="{{ isSelected ? 'selected-button' : 'add-button' }}"
+                                    col="1" />
+                        </GridLayout>
+                    </ListView.itemTemplate>
+                </ListView>
+
+                <GridLayout columns="*, *" row="2" class="modal-buttons">
+                    <Button text="Cancel" 
+                            tap="{{ onCancelAddBooks }}"
+                            class="modal-button-secondary"
+                            col="0" />
+                    <Button text="Add Selected" 
+                            tap="{{ onConfirmAddBooks }}"
+                            isEnabled="{{ selectedBooks.length > 0 }}"
+                            class="modal-button-primary"
+                            col="1" />
+                </GridLayout>
+            </GridLayout>
+        </AbsoluteLayout>
+    </GridLayout>
+</Page>
