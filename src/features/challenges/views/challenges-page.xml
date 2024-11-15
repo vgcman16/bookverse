@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="page">
+    <ActionBar class="action-bar">
+        <NavigationButton android.systemIcon="ic_menu_back" />
+        <Label text="Reading Challenges" class="action-bar-title" />
+        <ActionItem 
+            ios.position="right" 
+            android.position="actionBar"
+            tap="{{ onCreateChallenge }}"
+            visibility="{{ canCreateChallenge ? 'visible' : 'collapsed' }}">
+            <Label text="+" class="action-item-icon" />
+        </ActionItem>
+    </ActionBar>
+
+    <GridLayout rows="auto, *">
+        <!-- Filters -->
+        <GridLayout row="0" columns="*, auto" class="filters-container">
+            <SearchBar col="0"
+                      hint="Search challenges..."
+                      text="{{ searchQuery }}"
+                      submit="{{ onSearch }}"
+                      clear="{{ onClearSearch }}"
+                      class="search-bar" />
+            <Button col="1"
+                    text="Filter"
+                    tap="{{ onShowFilters }}"
+                    class="filter-button" />
+        </GridLayout>
+
+        <!-- Challenge List -->
+        <GridLayout row="1" class="challenges-container">
+            <ListView items="{{ challenges }}" 
+                      class="challenges-list"
+                      visibility="{{ !isLoading }}">
+                <ListView.itemTemplate>
+                    <GridLayout rows="auto, auto, auto" columns="*, auto" class="challenge-item">
+                        <!-- Challenge Type Badge -->
+                        <Label row="0" col="0"
+                               text="{{ type }}"
+                               class="challenge-type-badge {{ type | lowercase }}" />
+                        
+                        <!-- Challenge Status (if participating) -->
+                        <Label row="0" col="1"
+                               text="{{ status }}"
+                               class="challenge-status {{ status | lowercase }}"
+                               visibility="{{ isParticipating ? 'visible' : 'collapsed' }}" />
+                        
+                        <!-- Challenge Info -->
+                        <StackLayout row="1" col="0" colSpan="2" class="challenge-info">
+                            <Label text="{{ title }}" class="challenge-title" />
+                            <Label text="{{ description }}" class="challenge-description" textWrap="true" />
+                            
+                            <!-- Challenge Details -->
+                            <GridLayout columns="auto, *, auto" class="challenge-details">
+                                <!-- Goal -->
+                                <Label col="0" class="detail-item">
+                                    <FormattedString>
+                                        <Span text="🎯 " />
+                                        <Span text="{{ goal }}" />
+                                        <Span text=" {{ type | goalUnit }}" />
+                                    </FormattedString>
+                                </Label>
+                                
+                                <!-- Duration -->
+                                <Label col="1" class="detail-item">
+                                    <FormattedString>
+                                        <Span text="⏱️ " />
+                                        <Span text="{{ startDate | timeUntil }}" />
+                                    </FormattedString>
+                                </Label>
+                                
+                                <!-- Participants -->
+                                <Label col="2" class="detail-item">
+                                    <FormattedString>
+                                        <Span text="👥 " />
+                                        <Span text="{{ participants.length }}" />
+                                    </FormattedString>
+                                </Label>
+                            </GridLayout>
+                        </StackLayout>
+                        
+                        <!-- Progress Bar (if participating) -->
+                        <GridLayout row="2" col="0" colSpan="2" 
+                                  class="progress-container"
+                                  visibility="{{ isParticipating ? 'visible' : 'collapsed' }}">
+                            <Progress value="{{ currentProgress }}" 
+                                    maxValue="{{ goal }}"
+                                    class="progress-bar" />
+                            <Label text="{{ currentProgress }}/{{ goal }}"
+                                   class="progress-text" />
+                        </GridLayout>
+                        
+                        <!-- Join Button (if not participating) -->
+                        <Button row="2" col="0" colSpan="2"
+                                text="{{ isActive ? 'Join Challenge' : 'Coming Soon' }}"
+                                tap="{{ onJoinChallenge }}"
+                                isEnabled="{{ isActive }}"
+                                class="{{ isActive ? 'join-button' : 'join-button-disabled' }}"
+                                visibility="{{ !isParticipating ? 'visible' : 'collapsed' }}" />
+                    </GridLayout>
+                </ListView.itemTemplate>
+            </ListView>
+
+            <!-- Loading State -->
+            <ActivityIndicator busy="{{ isLoading }}" 
+                             class="activity-indicator" />
+
+            <!-- Empty State -->
+            <StackLayout class="empty-state"
+                        visibility="{{ !isLoading && challenges.length === 0 ? 'visible' : 'collapsed' }}">
+                <Label text="🔍" class="empty-state-icon" />
+                <Label text="No challenges found" class="empty-state-title" />
+                <Label text="Try adjusting your filters or check back later" 
+                       class="empty-state-description"
+                       textWrap="true" />
+            </StackLayout>
+        </GridLayout>
+    </GridLayout>
+
+    <!-- Filter Modal -->
+    <AbsoluteLayout class="modal-overlay"
+                    visibility="{{ isShowingFilters ? 'visible' : 'collapsed' }}"
+                    tap="{{ onHideFilters }}">
+        <StackLayout class="filter-modal">
+            <Label text="Filter Challenges" class="filter-modal-title" />
+            
+            <!-- Challenge Type -->
+            <Label text="Challenge Type" class="filter-section-title" />
+            <WrapLayout class="filter-chips">
+                <Button text="All Types"
+                        tap="{{ onSelectType }}"
+                        class="{{ selectedType === null ? 'chip-selected' : 'chip' }}" />
+                <Button repeat="{{ challengeTypes }}"
+                        text="{{ $value }}"
+                        tap="{{ onSelectType }}"
+                        class="{{ $value === selectedType ? 'chip-selected' : 'chip' }}" />
+            </WrapLayout>
+
+            <!-- Status -->
+            <Label text="Status" class="filter-section-title" />
+            <WrapLayout class="filter-chips">
+                <Button text="All Status"
+                        tap="{{ onSelectStatus }}"
+                        class="{{ selectedStatus === null ? 'chip-selected' : 'chip' }}" />
+                <Button repeat="{{ challengeStatuses }}"
+                        text="{{ $value }}"
+                        tap="{{ onSelectStatus }}"
+                        class="{{ $value === selectedStatus ? 'chip-selected' : 'chip' }}" />
+            </WrapLayout>
+
+            <!-- Difficulty -->
+            <Label text="Difficulty" class="filter-section-title" />
+            <WrapLayout class="filter-chips">
+                <Button text="All Difficulties"
+                        tap="{{ onSelectDifficulty }}"
+                        class="{{ selectedDifficulty === null ? 'chip-selected' : 'chip' }}" />
+                <Button repeat="{{ challengeDifficulties }}"
+                        text="{{ $value }}"
+                        tap="{{ onSelectDifficulty }}"
+                        class="{{ $value === selectedDifficulty ? 'chip-selected' : 'chip' }}" />
+            </WrapLayout>
+
+            <!-- Apply Filters Button -->
+            <Button text="Apply Filters"
+                    tap="{{ onApplyFilters }}"
+                    class="apply-filters-button" />
+        </StackLayout>
+    </AbsoluteLayout>
+</Page>
