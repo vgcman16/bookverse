@@ -58,7 +58,10 @@ A comprehensive mobile application for book lovers built with NativeScript and T
 - ✅ Club Membership
 - ✅ Club Models & Services
 - ✅ Club List UI
-- ⬜ Club Details Page
+- ✅ Club Details Page
+- ✅ Club Reading Management
+- ✅ Member Management
+- ✅ Role-based Permissions
 - ⬜ Discussion Forums
 - ⬜ Event Planning System
 - ⬜ Reading Challenges
@@ -90,6 +93,7 @@ A comprehensive mobile application for book lovers built with NativeScript and T
 - ✅ Collection Management UI
 - ✅ Review System UI
 - ✅ Club Management UI
+- ✅ Club Details UI
 - ⬜ Font Size Adjustment
 - ⬜ Reading Mode
 - ⬜ Accessibility Features
@@ -119,6 +123,7 @@ A comprehensive mobile application for book lovers built with NativeScript and T
 - ✅ Collections Implementation
 - ✅ Review System Implementation
 - ✅ Book Clubs Implementation
+- ✅ Club Details Implementation
 - ⬜ Unit Testing Setup
 - ⬜ E2E Testing Setup
 - ⬜ CI/CD Pipeline
