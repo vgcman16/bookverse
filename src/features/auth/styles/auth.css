@@ -42,6 +42,21 @@
     margin-top: 5;
 }
 
+.success-message {
+    color: #28a745;
+    font-size: 14;
+    margin-top: 5;
+    text-align: center;
+}
+
+.description {
+    color: #666666;
+    font-size: 16;
+    text-align: center;
+    margin: 20 30;
+    line-height: 1.4;
+}
+
 .remember-me Label {
     color: #666666;
     font-size: 14;
@@ -75,7 +90,6 @@
     background-color: #e6f2ff;
 }
 
-/* Google Sign In Button */
 .btn-google {
     background-color: #ffffff;
     border-width: 1;
@@ -120,6 +134,16 @@
     margin: 0 10;
 }
 
+.separator-container {
+    margin: 20 0;
+}
+
+.hr-light {
+    height: 1;
+    background-color: #e0e0e0;
+    vertical-align: center;
+}
+
 /* Dark Mode Support */
 @media (prefers-color-scheme: dark) {
     .page {
@@ -128,6 +152,10 @@
 
     .label {
         color: #ffffff;
+    }
+
+    .description {
+        color: #cccccc;
     }
 
     .input {
@@ -168,5 +196,9 @@
 
     .separator {
         color: #666666;
+    }
+
+    .hr-light {
+        background-color: #444444;
     }
 }
