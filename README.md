@@ -30,10 +30,11 @@ A comprehensive mobile application for book lovers built with NativeScript and T
 - ✅ Search Filters & Pagination
 - ✅ Book Models & Services
 - ✅ Search Results UI
-- ⬜ Book Details Page
-- ⬜ Reading Progress Tracking
-- ⬜ Book Categories/Tags
-- ⬜ Manual Book Entry System
+- ✅ Book Details Page
+- ✅ Reading Status Management
+- ✅ Reading Progress UI
+- ⬜ Reading Progress Backend
+- ⬜ Book Collections
 - ⬜ Offline Book Cache
 
 ### Reviews & Ratings (Next Phase)
@@ -71,6 +72,8 @@ A comprehensive mobile application for book lovers built with NativeScript and T
 - ✅ Form Validation
 - ✅ Profile Navigation
 - ✅ Search Experience
+- ✅ Book Details View
+- ✅ Reading Progress Tracking UI
 - ⬜ Font Size Adjustment
 - ⬜ Reading Mode
 - ⬜ Accessibility Features
@@ -96,6 +99,7 @@ A comprehensive mobile application for book lovers built with NativeScript and T
 - ✅ Authentication Implementation
 - ✅ Profile Management Implementation
 - ✅ Book Search Implementation
+- ✅ Book Details Implementation
 - ⬜ Unit Testing Setup
 - ⬜ E2E Testing Setup
 - ⬜ CI/CD Pipeline
