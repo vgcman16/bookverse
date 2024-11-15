@@ -1,151 +1,154 @@
 import { Observable } from '@nativescript/core';
 import { AuthService } from '../services/auth.service';
-import { getFirebaseErrorMessage } from '../../../core/config/firebase.config';
+import { GoogleAuthService } from '../services/google-auth.service';
 import { NavigationService } from '../../../core/services/navigation.service';
 
 export class LoginPageViewModel extends Observable {
     private authService: AuthService;
-    private _email: string = '';
-    private _password: string = '';
-    private _isLoading: boolean = false;
-    private _errorMessage: string = '';
+    private googleAuthService: GoogleAuthService;
+    private navigationService: NavigationService;
+
+    public email: string = '';
+    public password: string = '';
+    public rememberMe: boolean = false;
+    public isLoading: boolean = false;
+    public errorMessage: string = '';
+    public emailError: string = '';
+    public passwordError: string = '';
 
     constructor() {
         super();
         this.authService = AuthService.getInstance();
+        this.googleAuthService = GoogleAuthService.getInstance();
+        this.navigationService = NavigationService.getInstance();
     }
 
-    get email(): string {
-        return this._email;
-    }
-
-    set email(value: string) {
-        if (this._email !== value) {
-            this._email = value;
-            this.notifyPropertyChange('email', value);
-        }
-    }
-
-    get password(): string {
-        return this._password;
-    }
-
-    set password(value: string) {
-        if (this._password !== value) {
-            this._password = value;
-            this.notifyPropertyChange('password', value);
-        }
-    }
-
-    get isLoading(): boolean {
-        return this._isLoading;
-    }
-
-    set isLoading(value: boolean) {
-        if (this._isLoading !== value) {
-            this._isLoading = value;
-            this.notifyPropertyChange('isLoading', value);
-        }
-    }
-
-    get errorMessage(): string {
-        return this._errorMessage;
-    }
-
-    set errorMessage(value: string) {
-        if (this._errorMessage !== value) {
-            this._errorMessage = value;
-            this.notifyPropertyChange('errorMessage', value);
-        }
-    }
-
-    public async onLoginTap(): Promise<void> {
+    public async onLogin() {
         if (!this.validateForm()) {
             return;
         }
 
         try {
-            this.isLoading = true;
-            this.errorMessage = '';
-
-            await this.authService.signIn({
-                email: this.email,
-                password: this.password
-            });
-
-            // Navigate to home page on successful login
-            NavigationService.navigate('home');
+            this.setLoading(true);
+            await this.authService.signInWithEmailAndPassword(this.email, this.password);
+            this.navigateToHome();
         } catch (error) {
-            this.errorMessage = getFirebaseErrorMessage(error);
+            this.handleError(error);
         } finally {
-            this.isLoading = false;
+            this.setLoading(false);
         }
     }
 
-    public async onGoogleLoginTap(): Promise<void> {
+    public async onGoogleLogin() {
         try {
-            this.isLoading = true;
-            this.errorMessage = '';
+            this.setLoading(true);
+            this.clearErrors();
             
-            // TODO: Implement Google login
-            console.log('Google login not implemented yet');
-            
+            const user = await this.googleAuthService.signIn().toPromise();
+            if (user) {
+                this.navigateToHome();
+            }
         } catch (error) {
-            this.errorMessage = getFirebaseErrorMessage(error);
+            this.handleError(error);
         } finally {
-            this.isLoading = false;
+            this.setLoading(false);
         }
     }
 
-    public async onFacebookLoginTap(): Promise<void> {
-        try {
-            this.isLoading = true;
-            this.errorMessage = '';
-            
-            // TODO: Implement Facebook login
-            console.log('Facebook login not implemented yet');
-            
-        } catch (error) {
-            this.errorMessage = getFirebaseErrorMessage(error);
-        } finally {
-            this.isLoading = false;
-        }
+    public onForgotPassword() {
+        this.navigationService.navigate('features/auth/views/forgot-password-page');
     }
 
-    public onSignUpTap(): void {
-        NavigationService.navigate('signup');
-    }
-
-    public onForgotPasswordTap(): void {
-        NavigationService.navigate('forgot-password');
+    public onSignUp() {
+        this.navigationService.navigate('features/auth/views/signup-page');
     }
 
     private validateForm(): boolean {
-        if (!this.email || !this.email.trim()) {
-            this.errorMessage = 'Please enter your email';
-            return false;
+        let isValid = true;
+        this.clearErrors();
+
+        if (!this.email) {
+            this.emailError = 'Email is required';
+            isValid = false;
+        } else if (!this.isValidEmail(this.email)) {
+            this.emailError = 'Please enter a valid email address';
+            isValid = false;
         }
 
-        if (!this.isValidEmail(this.email)) {
-            this.errorMessage = 'Please enter a valid email address';
-            return false;
+        if (!this.password) {
+            this.passwordError = 'Password is required';
+            isValid = false;
+        } else if (this.password.length < 6) {
+            this.passwordError = 'Password must be at least 6 characters';
+            isValid = false;
         }
 
-        if (!this.password || !this.password.trim()) {
-            this.errorMessage = 'Please enter your password';
-            return false;
-        }
-
-        if (this.password.length < 6) {
-            this.errorMessage = 'Password must be at least 6 characters long';
-            return false;
-        }
-
-        return true;
+        this.notifyPropertyChanges();
+        return isValid;
     }
 
     private isValidEmail(email: string): boolean {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
+    }
+
+    private handleError(error: any) {
+        console.error('Login error:', error);
+        
+        if (error.code) {
+            switch (error.code) {
+                case 'auth/invalid-email':
+                    this.emailError = 'Invalid email address';
+                    break;
+                case 'auth/user-disabled':
+                    this.errorMessage = 'This account has been disabled';
+                    break;
+                case 'auth/user-not-found':
+                    this.emailError = 'No account found with this email';
+                    break;
+                case 'auth/wrong-password':
+                    this.passwordError = 'Incorrect password';
+                    break;
+                case 'auth/too-many-requests':
+                    this.errorMessage = 'Too many failed attempts. Please try again later';
+                    break;
+                case 'auth/network-request-failed':
+                    this.errorMessage = 'Network error. Please check your connection';
+                    break;
+                case 'sign_in_cancelled':
+                    // User cancelled the sign-in, no need to show error
+                    break;
+                default:
+                    this.errorMessage = 'An error occurred during sign in. Please try again';
+            }
+        } else {
+            this.errorMessage = error.message || 'An unexpected error occurred';
+        }
+
+        this.notifyPropertyChanges();
+    }
+
+    private clearErrors() {
+        this.errorMessage = '';
+        this.emailError = '';
+        this.passwordError = '';
+        this.notifyPropertyChanges();
+    }
+
+    private setLoading(value: boolean) {
+        this.isLoading = value;
+        this.notifyPropertyChange('isLoading', value);
+    }
+
+    private navigateToHome() {
+        this.navigationService.navigate('features/home/views/home-page', {
+            clearHistory: true
+        });
+    }
+
+    private notifyPropertyChanges() {
+        this.notifyPropertyChange('errorMessage', this.errorMessage);
+        this.notifyPropertyChange('emailError', this.emailError);
+        this.notifyPropertyChange('passwordError', this.passwordError);
     }
 }

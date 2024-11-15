@@ -7,7 +7,7 @@ export interface UserPreferences {
         newFollowers: boolean;
     };
     privacy: {
-        profileVisibility: string;
+        profileVisibility: 'public' | 'private' | 'friends';
         showReadingProgress: boolean;
         showReviews: boolean;
         allowMessages: boolean;
@@ -16,12 +16,20 @@ export interface UserPreferences {
     language: string;
 }
 
+export interface UserStats {
+    totalBooksRead: number;
+    totalPagesRead: number;
+    averageRating: number;
+    reviewsWritten: number;
+    challengesCompleted: number;
+    readingStreak: number;
+}
+
 export interface User {
     id: string;
     email: string;
-    password?: string; // Optional as we don't want to expose this in most cases
-    displayName: string;
-    photoURL: string;
+    displayName: string | null;
+    photoURL: string | null;
     bio?: string;
     favoriteGenres?: string[];
     favoriteAuthors?: string[];
@@ -29,31 +37,9 @@ export interface User {
     booksRead?: number;
     createdAt: Date;
     updatedAt: Date;
-    isPrivate?: boolean;
-    lastActive?: Date;
-    location?: string;
-    website?: string;
-    socialLinks?: {
-        twitter?: string;
-        instagram?: string;
-        goodreads?: string;
-    };
-    preferences?: UserPreferences;
-    stats?: {
-        totalBooksRead: number;
-        totalPagesRead: number;
-        averageRating: number;
-        reviewsWritten: number;
-        challengesCompleted: number;
-        readingStreak: number;
-    };
-    badges?: {
-        id: string;
-        name: string;
-        description: string;
-        imageUrl: string;
-        earnedAt: Date;
-    }[];
+    preferences: UserPreferences;
+    stats: UserStats;
+    emailVerified?: boolean;
 }
 
 export interface UserCredentials {
@@ -62,26 +48,9 @@ export interface UserCredentials {
 }
 
 export interface UserRegistration extends UserCredentials {
-    displayName: string;
-    photoURL?: string;
-    bio?: string;
-}
-
-export interface UserUpdate {
     displayName?: string;
     photoURL?: string;
     bio?: string;
-    favoriteGenres?: string[];
-    favoriteAuthors?: string[];
-    readingGoal?: number;
-    location?: string;
-    website?: string;
-    socialLinks?: {
-        twitter?: string;
-        instagram?: string;
-        goodreads?: string;
-    };
-    preferences?: Partial<UserPreferences>;
 }
 
 export interface AuthState {
@@ -109,11 +78,11 @@ export const DEFAULT_USER_PREFERENCES: UserPreferences = {
     language: 'en'
 };
 
-// Auth service method names for consistency
-export const AUTH_METHODS = {
-    SIGN_IN: 'signIn',
-    SIGN_OUT: 'signOut',
-    UPDATE_PROFILE: 'updateProfile',
-    GET_USER_BY_ID: 'getUserById',
-    IS_AUTHENTICATED: 'isAuthenticated'
-} as const;
+export const DEFAULT_USER_STATS: UserStats = {
+    totalBooksRead: 0,
+    totalPagesRead: 0,
+    averageRating: 0,
+    reviewsWritten: 0,
+    challengesCompleted: 0,
+    readingStreak: 0
+};

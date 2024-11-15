@@ -1,174 +1,97 @@
 import { Observable } from '@nativescript/core';
 import { AuthService } from '../../auth/services/auth.service';
 import { NavigationService } from '../../../core/services/navigation.service';
-import { User, UserPreferences, DEFAULT_USER_PREFERENCES } from '../../auth/models/user.model';
+import { User, UserPreferences } from '../../auth/models/user.model';
 
 export class ProfilePageViewModel extends Observable {
     private authService: AuthService;
+    private navigationService: NavigationService;
     private _user: User | null = null;
-    private _isLoading: boolean = false;
 
     constructor() {
         super();
         this.authService = AuthService.getInstance();
+        this.navigationService = NavigationService.getInstance();
         this.loadUserProfile();
     }
 
-    // Getters and Setters
-    get user(): User | null {
+    private async loadUserProfile() {
+        const user = this.authService.getCurrentUser();
+        if (user) {
+            this._user = user;
+            this.notifyPropertyChange('user', user);
+        }
+    }
+
+    public get user(): User | null {
         return this._user;
     }
 
-    set user(value: User | null) {
-        if (this._user !== value) {
-            this._user = value;
-            this.notifyPropertyChange('user', value);
-        }
+    public onEditProfile() {
+        this.navigationService.navigate('features/profile/views/profile-edit-page');
     }
 
-    get isLoading(): boolean {
-        return this._isLoading;
+    public onViewBooks() {
+        this.navigationService.navigate('features/books/views/collections-page');
     }
 
-    set isLoading(value: boolean) {
-        if (this._isLoading !== value) {
-            this._isLoading = value;
-            this.notifyPropertyChange('isLoading', value);
-        }
-    }
-
-    get displayName(): string {
-        return this.user?.displayName || '';
-    }
-
-    get photoURL(): string {
-        return this.user?.photoURL || '';
-    }
-
-    get bio(): string {
-        return this.user?.bio || '';
-    }
-
-    get readingGoal(): number {
-        return this.user?.readingGoal || 0;
-    }
-
-    get booksRead(): number {
-        return this.user?.booksRead || 0;
-    }
-
-    get readingProgress(): number {
-        return this.readingGoal > 0 ? (this.booksRead / this.readingGoal) * 100 : 0;
-    }
-
-    get preferences(): UserPreferences {
-        return this.user?.preferences || {
-            ...DEFAULT_USER_PREFERENCES,
-            theme: 'light',
-            notifications: {
-                pushEnabled: true,
-                emailEnabled: true,
-                bookClubUpdates: true,
-                reviewResponses: true,
-                newFollowers: true
-            },
-            privacy: {
-                profileVisibility: 'public',
-                showReadingProgress: true,
-                showReviews: true,
-                allowMessages: true
-            },
-            language: 'en'
-        };
-    }
-
-    // Event Handlers
-    public onEditProfile(): void {
-        NavigationService.navigate('profile/edit');
-    }
-
-    public onViewCollections(): void {
-        NavigationService.navigate('books/collections');
-    }
-
-    public onViewReviews(): void {
-        NavigationService.navigate('reviews/user', {
-            userId: this.user?.id
+    public onViewReviews() {
+        this.navigationService.navigate('features/reviews/views/review-list', {
+            userId: this._user?.id
         });
     }
 
-    public onToggleNotifications(): void {
-        if (!this.user?.preferences) return;
-
-        const updatedPreferences = {
-            ...this.user.preferences,
-            notifications: {
-                ...this.user.preferences.notifications,
-                pushEnabled: !this.user.preferences.notifications.pushEnabled
-            }
-        };
-
-        this.updatePreferences(updatedPreferences);
+    public onViewChallenges() {
+        this.navigationService.navigate('features/challenges/views/challenges-page', {
+            userId: this._user?.id
+        });
     }
 
-    public onTogglePrivacy(): void {
-        if (!this.user?.preferences) return;
-
-        const updatedPreferences = {
-            ...this.user.preferences,
-            privacy: {
-                ...this.user.preferences.privacy,
-                profileVisibility: this.user.preferences.privacy.profileVisibility === 'public' ? 'private' : 'public'
-            }
-        };
-
-        this.updatePreferences(updatedPreferences);
+    public onViewClubs() {
+        this.navigationService.navigate('features/clubs/views/clubs-page', {
+            userId: this._user?.id
+        });
     }
 
-    public async onSignOut(): Promise<void> {
+    public async onSignOut() {
         try {
             await this.authService.signOut();
-            NavigationService.navigate('auth/login', {
+            this.navigationService.navigate('features/auth/views/login-page', {
                 clearHistory: true
             });
         } catch (error) {
-            console.error('Error signing out:', error);
-            // TODO: Show error message to user
+            console.error('Sign out error:', error);
         }
     }
 
-    // Private Methods
-    private async loadUserProfile(): Promise<void> {
-        this.isLoading = true;
-        try {
-            const user = this.authService.getCurrentUser();
-            if (!user) {
-                NavigationService.navigate('auth/login', {
+    public onUpdatePreferences(preferences: UserPreferences) {
+        if (!this._user) return;
+
+        const updatedUser: User = {
+            ...this._user,
+            preferences,
+            updatedAt: new Date()
+        };
+
+        // Ensure we have non-null values for required fields
+        const displayName = updatedUser.displayName || '';
+        const photoURL = updatedUser.photoURL || '';
+
+        this.authService.updateProfile(displayName, photoURL);
+        this._user = updatedUser;
+        this.notifyPropertyChange('user', updatedUser);
+    }
+
+    public onDeleteAccount() {
+        // TODO: Add confirmation dialog
+        this.authService.deleteAccount()
+            .then(() => {
+                this.navigationService.navigate('features/auth/views/login-page', {
                     clearHistory: true
                 });
-                return;
-            }
-            this.user = user;
-        } catch (error) {
-            console.error('Error loading user profile:', error);
-            // TODO: Show error message to user
-        } finally {
-            this.isLoading = false;
-        }
-    }
-
-    private async updatePreferences(preferences: UserPreferences): Promise<void> {
-        if (!this.user) return;
-
-        try {
-            const updatedUser = await this.authService.updateProfile({
-                ...this.user,
-                preferences
+            })
+            .catch(error => {
+                console.error('Delete account error:', error);
             });
-            this.user = updatedUser;
-        } catch (error) {
-            console.error('Error updating preferences:', error);
-            // TODO: Show error message to user
-        }
     }
 }

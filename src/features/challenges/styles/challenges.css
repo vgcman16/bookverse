@@ -1,0 +1,333 @@
+/* Container Styles */
+.challenges-container {
+    background-color: #f5f6fa;
+}
+
+/* Filters Container */
+.filters-container {
+    background-color: #ffffff;
+    padding: 8 16;
+    border-bottom-width: 1;
+    border-bottom-color: #ecf0f1;
+}
+
+.search-bar {
+    background-color: #f5f6fa;
+    border-radius: 8;
+    placeholder-color: #95a5a6;
+}
+
+.filter-button {
+    background-color: #3498db;
+    color: #ffffff;
+    font-size: 14;
+    padding: 8 16;
+    border-radius: 8;
+    margin-left: 8;
+    min-width: 80;
+}
+
+/* Challenge List */
+.challenges-list {
+    background-color: transparent;
+    separator-color: transparent;
+    padding: 8;
+}
+
+.challenge-item {
+    background-color: #ffffff;
+    border-radius: 12;
+    margin: 8;
+    elevation: 2;
+    android-elevation: 2;
+}
+
+/* Challenge Type Badge */
+.challenge-type-badge {
+    font-size: 12;
+    color: #ffffff;
+    padding: 4 12;
+    border-radius: 16;
+    margin: 12 12 4 12;
+    text-transform: uppercase;
+}
+
+.challenge-type-badge.booksread {
+    background-color: #3498db;
+}
+
+.challenge-type-badge.pagesread {
+    background-color: #2ecc71;
+}
+
+.challenge-type-badge.genresexplored {
+    background-color: #9b59b6;
+}
+
+.challenge-type-badge.authorsdiscovered {
+    background-color: #e67e22;
+}
+
+.challenge-type-badge.readingstreak {
+    background-color: #e74c3c;
+}
+
+.challenge-type-badge.readingtime {
+    background-color: #1abc9c;
+}
+
+.challenge-type-badge.reviewswritten {
+    background-color: #f1c40f;
+}
+
+.challenge-type-badge.discussionsparticipated {
+    background-color: #34495e;
+}
+
+.challenge-type-badge.custom {
+    background-color: #95a5a6;
+}
+
+/* Challenge Status */
+.challenge-status {
+    font-size: 12;
+    padding: 4 12;
+    border-radius: 16;
+    margin: 12;
+    text-transform: uppercase;
+}
+
+.challenge-status.notstarted {
+    color: #95a5a6;
+    background-color: #ecf0f1;
+}
+
+.challenge-status.inprogress {
+    color: #2ecc71;
+    background-color: #eafaf1;
+}
+
+.challenge-status.completed {
+    color: #3498db;
+    background-color: #ebf5fb;
+}
+
+.challenge-status.failed {
+    color: #e74c3c;
+    background-color: #fdedec;
+}
+
+.challenge-status.abandoned {
+    color: #95a5a6;
+    background-color: #ecf0f1;
+}
+
+/* Challenge Info */
+.challenge-info {
+    padding: 8 12;
+}
+
+.challenge-title {
+    font-size: 16;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 4;
+}
+
+.challenge-description {
+    font-size: 14;
+    color: #7f8c8d;
+    margin-bottom: 8;
+    line-height: 1.4;
+}
+
+/* Challenge Details */
+.challenge-details {
+    margin-top: 8;
+}
+
+.detail-item {
+    font-size: 12;
+    color: #7f8c8d;
+}
+
+/* Progress Bar */
+.progress-container {
+    padding: 8 12 12 12;
+}
+
+.progress-bar {
+    background-color: #ecf0f1;
+    color: #3498db;
+}
+
+.progress-text {
+    font-size: 12;
+    color: #7f8c8d;
+    text-align: center;
+    margin-top: 4;
+}
+
+/* Join Button */
+.join-button {
+    background-color: #3498db;
+    color: #ffffff;
+    font-size: 14;
+    padding: 12;
+    margin: 8 12 12 12;
+    border-radius: 8;
+}
+
+.join-button-disabled {
+    background-color: #bdc3c7;
+    color: #ffffff;
+    font-size: 14;
+    padding: 12;
+    margin: 8 12 12 12;
+    border-radius: 8;
+}
+
+/* Filter Modal */
+.modal-overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+}
+
+.filter-modal {
+    background-color: #ffffff;
+    width: 80%;
+    padding: 16;
+    margin: 20% 10%;
+    border-radius: 12;
+}
+
+.filter-modal-title {
+    font-size: 18;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 16;
+}
+
+.filter-section-title {
+    font-size: 14;
+    color: #7f8c8d;
+    margin: 12 0 8 0;
+}
+
+.filter-chips {
+    margin: 0 0 16 0;
+}
+
+.chip {
+    font-size: 12;
+    color: #7f8c8d;
+    background-color: #ecf0f1;
+    padding: 8 16;
+    margin: 4;
+    border-radius: 16;
+}
+
+.chip-selected {
+    font-size: 12;
+    color: #ffffff;
+    background-color: #3498db;
+    padding: 8 16;
+    margin: 4;
+    border-radius: 16;
+}
+
+.apply-filters-button {
+    background-color: #3498db;
+    color: #ffffff;
+    font-size: 14;
+    padding: 12;
+    margin-top: 16;
+    border-radius: 8;
+}
+
+/* Loading State */
+.activity-indicator {
+    color: #3498db;
+    width: 32;
+    height: 32;
+}
+
+/* Empty State */
+.empty-state {
+    padding: 32;
+    text-align: center;
+}
+
+.empty-state-icon {
+    font-size: 48;
+    margin-bottom: 16;
+}
+
+.empty-state-title {
+    font-size: 18;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 8;
+}
+
+.empty-state-description {
+    font-size: 14;
+    color: #7f8c8d;
+    text-align: center;
+}
+
+/* Dark Theme Support */
+.ns-dark .challenges-container {
+    background-color: #1a1a1a;
+}
+
+.ns-dark .filters-container,
+.ns-dark .challenge-item,
+.ns-dark .filter-modal {
+    background-color: #2d2d2d;
+}
+
+.ns-dark .search-bar {
+    background-color: #1a1a1a;
+    color: #ecf0f1;
+    placeholder-color: #7f8c8d;
+}
+
+.ns-dark .challenge-title {
+    color: #ecf0f1;
+}
+
+.ns-dark .challenge-description,
+.ns-dark .detail-item,
+.ns-dark .progress-text,
+.ns-dark .filter-section-title {
+    color: #95a5a6;
+}
+
+.ns-dark .chip {
+    background-color: #34495e;
+    color: #ecf0f1;
+}
+
+.ns-dark .progress-bar {
+    background-color: #34495e;
+}
+
+/* Animations */
+.challenge-item {
+    animation-name: slideIn;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(20);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

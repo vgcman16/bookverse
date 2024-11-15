@@ -19,11 +19,17 @@ export interface NavigationOptions extends NavigationEntry {
 }
 
 export class NavigationService {
+    private static instance: NavigationService;
     private static frame: Frame;
     private static navigationStack: string[] = [];
 
-    public static setRootNavigation(options: NavigationOptions): void {
-        Frame.topmost().navigate(options);
+    private constructor() {}
+
+    public static getInstance(): NavigationService {
+        if (!NavigationService.instance) {
+            NavigationService.instance = new NavigationService();
+        }
+        return NavigationService.instance;
     }
 
     public static navigate(path: string, options: Partial<NavigationOptions> = {}): void {
@@ -48,49 +54,48 @@ export class NavigationService {
             }
         };
 
-        this.navigationStack.push(path);
+        NavigationService.navigationStack.push(path);
         Frame.topmost().navigate(navigationEntry);
     }
 
     public static back(): void {
-        if (this.canGoBack()) {
-            this.navigationStack.pop();
+        if (NavigationService.canGoBack()) {
+            NavigationService.navigationStack.pop();
             Frame.topmost().goBack();
         }
     }
 
     public static getCurrentRoute(): string {
-        return this.navigationStack[this.navigationStack.length - 1] || '';
+        return NavigationService.navigationStack[NavigationService.navigationStack.length - 1] || '';
     }
 
     public static getBackStack(): BackstackEntry[] {
         return Frame.topmost().backStack;
     }
 
-    public static clearHistory(): void {
-        const topmost = Frame.topmost();
-        const currentPage = topmost.currentPage;
-        if (currentPage) {
-            topmost.navigate({
-                create: () => currentPage,
+    public static navigateToRoot(): void {
+        const frame = Frame.topmost();
+        if (frame) {
+            frame.navigate({
+                moduleName: 'features/home/views/home-page',
                 clearHistory: true
             });
         }
-        this.navigationStack = [this.getCurrentRoute()];
+        NavigationService.navigationStack = [NavigationService.getCurrentRoute()];
     }
 
     public static canGoBack(): boolean {
-        return this.navigationStack.length > 1;
+        return NavigationService.navigationStack.length > 1;
     }
 
     public static reset(path: string): void {
-        this.navigationStack = [path];
-        this.navigate(path, { clearHistory: true });
+        NavigationService.navigationStack = [path];
+        NavigationService.navigate(path, { clearHistory: true });
     }
 
     public static replaceTopmost(path: string, options: Partial<NavigationOptions> = {}): void {
-        this.navigationStack.pop();
-        this.navigationStack.push(path);
+        NavigationService.navigationStack.pop();
+        NavigationService.navigationStack.push(path);
         
         const navigationEntry: NavigationOptions = {
             moduleName: path,
@@ -126,10 +131,59 @@ export class NavigationService {
 
     // Alias methods for consistency
     public static goBack(): void {
-        this.back();
+        NavigationService.back();
     }
 
     public static navigateToLogin(): void {
-        this.navigate('auth/login', { clearHistory: true });
+        NavigationService.navigate('features/auth/views/login-page', { clearHistory: true });
+    }
+
+    // Instance methods that delegate to static methods
+    public navigate(path: string, options: Partial<NavigationOptions> = {}): void {
+        NavigationService.navigate(path, options);
+    }
+
+    public back(): void {
+        NavigationService.back();
+    }
+
+    public getCurrentRoute(): string {
+        return NavigationService.getCurrentRoute();
+    }
+
+    public getBackStack(): BackstackEntry[] {
+        return NavigationService.getBackStack();
+    }
+
+    public navigateToRoot(): void {
+        NavigationService.navigateToRoot();
+    }
+
+    public canGoBack(): boolean {
+        return NavigationService.canGoBack();
+    }
+
+    public reset(path: string): void {
+        NavigationService.reset(path);
+    }
+
+    public replaceTopmost(path: string, options: Partial<NavigationOptions> = {}): void {
+        NavigationService.replaceTopmost(path, options);
+    }
+
+    public setFrame(frame: Frame): void {
+        NavigationService.setFrame(frame);
+    }
+
+    public getFrame(): Frame {
+        return NavigationService.getFrame();
+    }
+
+    public goBack(): void {
+        NavigationService.goBack();
+    }
+
+    public navigateToLogin(): void {
+        NavigationService.navigateToLogin();
     }
 }

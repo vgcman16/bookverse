@@ -1,0 +1,340 @@
+/* Profile Header */
+.profile-header {
+    background-color: #ffffff;
+    padding: 16;
+    elevation: 2;
+    android-elevation: 2;
+}
+
+.user-info {
+    margin-bottom: 16;
+}
+
+.profile-image {
+    border-radius: 40;
+    margin-bottom: 8;
+}
+
+.profile-name {
+    font-size: 18;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 4;
+}
+
+.profile-bio {
+    font-size: 14;
+    color: #7f8c8d;
+    margin-bottom: 8;
+}
+
+.btn-follow {
+    background-color: #3498db;
+    color: #ffffff;
+    font-size: 14;
+    padding: 8 16;
+    border-radius: 20;
+    min-width: 100;
+}
+
+.btn-following {
+    background-color: #ecf0f1;
+    color: #2c3e50;
+    font-size: 14;
+    padding: 8 16;
+    border-radius: 20;
+    min-width: 100;
+}
+
+/* Stats Container */
+.stats-container {
+    border-top-width: 1;
+    border-top-color: #ecf0f1;
+    padding-top: 16;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 18;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.stat-label {
+    font-size: 12;
+    color: #7f8c8d;
+}
+
+/* Activity Tabs */
+.activity-tabs {
+    background-color: #f5f6fa;
+}
+
+TabView TabStrip {
+    background-color: #ffffff;
+    highlight-color: #3498db;
+}
+
+TabView TabStripItem {
+    color: #7f8c8d;
+    font-size: 14;
+}
+
+TabView TabStripItem:selected {
+    color: #3498db;
+}
+
+/* Activity List */
+.activity-list {
+    background-color: transparent;
+    separator-color: transparent;
+}
+
+.activity-item {
+    background-color: #ffffff;
+    margin: 8;
+    border-radius: 12;
+    elevation: 2;
+    android-elevation: 2;
+    padding: 12;
+}
+
+.activity-avatar {
+    width: 40;
+    height: 40;
+    border-radius: 20;
+    margin-right: 12;
+}
+
+.activity-content {
+    padding-left: 4;
+}
+
+.activity-message {
+    font-size: 14;
+    color: #2c3e50;
+    margin-bottom: 4;
+}
+
+.activity-time {
+    font-size: 12;
+    color: #95a5a6;
+    margin-bottom: 8;
+}
+
+/* Activity Details */
+.activity-details {
+    background-color: #f8f9fa;
+    border-radius: 8;
+    padding: 8;
+    margin: 8 0;
+}
+
+.book-activity {
+    orientation: horizontal;
+    align-items: center;
+}
+
+.book-cover {
+    width: 50;
+    height: 75;
+    border-radius: 4;
+    margin-right: 8;
+}
+
+.book-title {
+    font-size: 14;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.review-activity {
+    padding: 8;
+}
+
+.review-text {
+    font-size: 14;
+    color: #34495e;
+    font-style: italic;
+    margin-bottom: 8;
+}
+
+.review-info {
+    margin-top: 4;
+}
+
+.review-rating {
+    color: #f1c40f;
+    font-size: 14;
+    margin-right: 8;
+}
+
+.review-book-title {
+    font-size: 12;
+    color: #7f8c8d;
+}
+
+.challenge-activity {
+    padding: 8;
+}
+
+.challenge-title {
+    font-size: 14;
+    color: #2c3e50;
+    margin-bottom: 8;
+}
+
+.challenge-progress {
+    background-color: #ecf0f1;
+    color: #27ae60;
+}
+
+/* Activity Interactions */
+.activity-interactions {
+    margin-top: 8;
+    padding-top: 8;
+    border-top-width: 1;
+    border-top-color: #ecf0f1;
+}
+
+.interaction-btn {
+    background-color: transparent;
+    color: #7f8c8d;
+    font-size: 14;
+    padding: 4 8;
+    margin-right: 16;
+    min-width: 70;
+}
+
+/* Books List */
+.books-list {
+    background-color: transparent;
+    separator-color: transparent;
+}
+
+.book-item {
+    background-color: #ffffff;
+    margin: 8;
+    border-radius: 12;
+    elevation: 2;
+    android-elevation: 2;
+    padding: 12;
+}
+
+.book-info {
+    padding-left: 12;
+}
+
+.book-author {
+    font-size: 14;
+    color: #7f8c8d;
+    margin-bottom: 4;
+}
+
+.book-status {
+    font-size: 12;
+    color: #3498db;
+    margin-bottom: 4;
+}
+
+.reading-progress {
+    background-color: #ecf0f1;
+    color: #3498db;
+}
+
+/* Loading and Empty States */
+.activity-indicator {
+    color: #3498db;
+    width: 32;
+    height: 32;
+}
+
+.empty-state {
+    padding: 32;
+    text-align: center;
+}
+
+.empty-icon {
+    font-size: 48;
+    margin-bottom: 16;
+}
+
+.empty-title {
+    font-size: 18;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 8;
+}
+
+.empty-message {
+    font-size: 14;
+    color: #7f8c8d;
+    text-align: center;
+}
+
+/* Dark Theme Support */
+.ns-dark .profile-header,
+.ns-dark .activity-item,
+.ns-dark .book-item {
+    background-color: #2d2d2d;
+}
+
+.ns-dark .profile-name,
+.ns-dark .stat-number,
+.ns-dark .activity-message,
+.ns-dark .book-title,
+.ns-dark .challenge-title,
+.ns-dark .empty-title {
+    color: #ecf0f1;
+}
+
+.ns-dark .profile-bio,
+.ns-dark .stat-label,
+.ns-dark .activity-time,
+.ns-dark .book-author,
+.ns-dark .empty-message {
+    color: #95a5a6;
+}
+
+.ns-dark .btn-following {
+    background-color: #34495e;
+    color: #ecf0f1;
+}
+
+.ns-dark .activity-details {
+    background-color: #1a1a1a;
+}
+
+.ns-dark .activity-interactions {
+    border-top-color: #34495e;
+}
+
+.ns-dark .interaction-btn {
+    color: #95a5a6;
+}
+
+.ns-dark .reading-progress,
+.ns-dark .challenge-progress {
+    background-color: #34495e;
+}
+
+/* Animations */
+.activity-item {
+    animation-name: slideIn;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(20);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

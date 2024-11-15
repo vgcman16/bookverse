@@ -1,0 +1,236 @@
+/* Profile Container */
+.profile-container {
+    padding: 16;
+}
+
+/* Profile Header */
+.profile-header {
+    margin-bottom: 24;
+    padding: 16;
+    background-color: #ffffff;
+    border-radius: 12;
+}
+
+.profile-info {
+    margin-right: 16;
+}
+
+.profile-name {
+    font-size: 24;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 4;
+}
+
+.profile-email {
+    font-size: 14;
+    color: #7f8c8d;
+}
+
+.profile-image {
+    border-radius: 40;
+    border-width: 2;
+    border-color: #3498db;
+}
+
+/* Stats Section */
+.stats-container {
+    background-color: #ffffff;
+    border-radius: 12;
+    padding: 16;
+    margin-bottom: 24;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 8;
+}
+
+.stat-number {
+    font-size: 24;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.stat-label {
+    font-size: 12;
+    color: #7f8c8d;
+    margin-top: 4;
+}
+
+/* Reading Progress */
+.reading-goal {
+    background-color: #ffffff;
+    border-radius: 12;
+    padding: 16;
+    margin-bottom: 8;
+}
+
+.reading-progress-bar {
+    height: 6;
+    margin-bottom: 8;
+    background-color: #ecf0f1;
+    color: #27ae60;
+}
+
+.progress-text {
+    font-size: 14;
+    color: #7f8c8d;
+}
+
+.progress-percent {
+    font-size: 14;
+    font-weight: bold;
+    color: #27ae60;
+}
+
+/* Section Styles */
+.section {
+    margin-bottom: 24;
+}
+
+.section-title {
+    font-size: 18;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 12;
+    margin-left: 4;
+}
+
+/* Profile Edit Styles */
+.profile-edit-container {
+    padding: 16;
+}
+
+.image-section {
+    align-items: center;
+    margin-bottom: 24;
+}
+
+.photo-button {
+    margin-top: 12;
+    background-color: transparent;
+    color: #3498db;
+    border-width: 0;
+}
+
+.form-section {
+    margin-bottom: 24;
+}
+
+.input-label {
+    font-size: 14;
+    color: #7f8c8d;
+    margin-bottom: 4;
+    margin-left: 4;
+}
+
+.input {
+    font-size: 16;
+    padding: 12;
+    margin-bottom: 16;
+    border-width: 1;
+    border-color: #bdc3c7;
+    border-radius: 8;
+    background-color: #ffffff;
+}
+
+.bio-input {
+    height: 100;
+    margin-bottom: 24;
+}
+
+.section-header {
+    font-size: 18;
+    font-weight: bold;
+    color: #2c3e50;
+    margin: 16 4;
+}
+
+.genres-container {
+    margin: 8 0 16 0;
+}
+
+.genre-tag {
+    background-color: #ecf0f1;
+    color: #2c3e50;
+    padding: 8 16;
+    margin: 4;
+    border-radius: 16;
+}
+
+.genre-tag-selected {
+    background-color: #3498db;
+    color: #ffffff;
+    padding: 8 16;
+    margin: 4;
+    border-radius: 16;
+}
+
+.goal-input {
+    width: 80;
+    text-align: center;
+}
+
+.setting-label {
+    font-size: 16;
+    color: #2c3e50;
+}
+
+.setting-switch {
+    color: #3498db;
+}
+
+.privacy-grid,
+.notifications-grid {
+    margin-bottom: 24;
+    background-color: #ffffff;
+    border-radius: 12;
+    padding: 16;
+}
+
+/* Dark Theme Support */
+.ns-dark .profile-header,
+.ns-dark .stats-container,
+.ns-dark .reading-goal,
+.ns-dark .input,
+.ns-dark .privacy-grid,
+.ns-dark .notifications-grid {
+    background-color: #2d2d2d;
+}
+
+.ns-dark .profile-name,
+.ns-dark .stat-number,
+.ns-dark .section-header,
+.ns-dark .setting-label {
+    color: #ecf0f1;
+}
+
+.ns-dark .profile-email,
+.ns-dark .stat-label,
+.ns-dark .input-label {
+    color: #bdc3c7;
+}
+
+.ns-dark .genre-tag {
+    background-color: #34495e;
+    color: #ecf0f1;
+}
+
+.ns-dark .input {
+    border-color: #34495e;
+    color: #ecf0f1;
+}
+
+/* Loading and Error States */
+.loading-indicator {
+    color: #3498db;
+    margin: 20 0;
+}
+
+.error-message {
+    color: #e74c3c;
+    text-align: center;
+    font-size: 14;
+    margin: 8 0;
+}

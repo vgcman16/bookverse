@@ -20,7 +20,7 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Check code formatting
         run: npm run format -- --check
@@ -57,7 +57,7 @@ jobs:
           java-version: '17'
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Install NativeScript CLI
         run: npm install -g nativescript
@@ -91,7 +91,7 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Install NativeScript CLI
         run: npm install -g nativescript
@@ -137,7 +137,7 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Install NativeScript CLI
         run: npm install -g nativescript

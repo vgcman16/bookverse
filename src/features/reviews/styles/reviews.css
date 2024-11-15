@@ -1,0 +1,283 @@
+/* Review Stats */
+.review-stats {
+    background-color: #ffffff;
+    padding: 16;
+    margin: 8;
+    border-radius: 12;
+}
+
+.rating-summary {
+    margin-right: 16;
+}
+
+.average-rating {
+    font-size: 36;
+    font-weight: bold;
+    color: #2c3e50;
+    text-align: center;
+}
+
+.star-rating {
+    margin: 4 0;
+}
+
+.star {
+    font-size: 16;
+    color: #f1c40f;
+}
+
+.review-count {
+    font-size: 14;
+    color: #7f8c8d;
+    text-align: center;
+}
+
+/* Rating Distribution */
+.rating-distribution {
+    margin-left: 16;
+}
+
+.rating-bar {
+    margin: 4 0;
+}
+
+.rating-label {
+    font-size: 14;
+    color: #7f8c8d;
+    width: 20;
+    text-align: center;
+}
+
+.rating-progress {
+    height: 4;
+    margin: 0 8;
+    background-color: #ecf0f1;
+    color: #f1c40f;
+}
+
+.rating-count {
+    font-size: 14;
+    color: #7f8c8d;
+    width: 30;
+    text-align: right;
+}
+
+/* Reviews List */
+.reviews-list {
+    background-color: transparent;
+    separator-color: transparent;
+}
+
+.review-item {
+    background-color: #ffffff;
+    margin: 8;
+    padding: 16;
+    border-radius: 12;
+}
+
+/* Review Header */
+.review-header {
+    margin-bottom: 8;
+}
+
+.user-avatar {
+    border-radius: 20;
+    margin-right: 12;
+}
+
+.user-name {
+    font-size: 16;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.review-date {
+    font-size: 12;
+    color: #95a5a6;
+}
+
+.spoiler-alert {
+    font-size: 12;
+    color: #e74c3c;
+    background-color: #fadbd8;
+    padding: 4 8;
+    border-radius: 4;
+}
+
+/* Review Rating */
+.review-rating {
+    margin: 8 0;
+}
+
+/* Review Content */
+.review-content {
+    font-size: 14;
+    color: #34495e;
+    margin: 8 0;
+    line-height: 1.5;
+}
+
+/* Review Actions */
+.review-actions {
+    margin-top: 12;
+    padding-top: 12;
+    border-top-width: 1;
+    border-top-color: #ecf0f1;
+}
+
+.action-button {
+    background-color: transparent;
+    color: #7f8c8d;
+    font-size: 14;
+    padding: 4 8;
+    margin-right: 16;
+    min-width: 70;
+}
+
+.action-button:highlighted {
+    color: #3498db;
+}
+
+.options-button {
+    background-color: transparent;
+    color: #7f8c8d;
+    font-size: 20;
+    padding: 4 8;
+    min-width: 40;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 32;
+}
+
+.empty-icon {
+    font-size: 48;
+    margin-bottom: 16;
+}
+
+.empty-message {
+    color: #7f8c8d;
+    font-size: 16;
+    margin-bottom: 16;
+}
+
+.write-review-button {
+    background-color: #3498db;
+    color: #ffffff;
+    font-size: 16;
+    padding: 12 24;
+    border-radius: 8;
+}
+
+/* Loading State */
+.loading-indicator {
+    margin: 20;
+}
+
+/* Error State */
+.error-state {
+    text-align: center;
+    padding: 32;
+}
+
+.error-icon {
+    font-size: 32;
+    margin-bottom: 16;
+}
+
+.error-message {
+    color: #e74c3c;
+    font-size: 16;
+    text-align: center;
+    margin-bottom: 16;
+}
+
+.retry-button {
+    background-color: #3498db;
+    color: #ffffff;
+    font-size: 16;
+    padding: 12 24;
+    border-radius: 8;
+}
+
+/* Options Modal */
+.modal-overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+}
+
+.options-menu {
+    background-color: #ffffff;
+    width: 80%;
+    padding: 16;
+    margin: 20% 10%;
+    border-radius: 12;
+}
+
+.option-button {
+    font-size: 16;
+    color: #2c3e50;
+    padding: 12;
+    margin: 4 0;
+    text-align: left;
+    background-color: transparent;
+}
+
+.delete-button {
+    color: #e74c3c;
+}
+
+/* Dark Theme Support */
+.ns-dark .review-stats,
+.ns-dark .review-item,
+.ns-dark .options-menu {
+    background-color: #2d2d2d;
+}
+
+.ns-dark .average-rating,
+.ns-dark .user-name,
+.ns-dark .review-content,
+.ns-dark .option-button {
+    color: #ecf0f1;
+}
+
+.ns-dark .review-count,
+.ns-dark .rating-label,
+.ns-dark .rating-count,
+.ns-dark .review-date,
+.ns-dark .action-button {
+    color: #bdc3c7;
+}
+
+.ns-dark .rating-progress {
+    background-color: #34495e;
+}
+
+.ns-dark .review-actions {
+    border-top-color: #34495e;
+}
+
+.ns-dark .empty-message {
+    color: #bdc3c7;
+}
+
+/* Animations */
+.review-item {
+    animation-name: slideIn;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(20);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

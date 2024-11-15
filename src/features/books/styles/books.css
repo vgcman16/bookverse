@@ -1,0 +1,266 @@
+/* Common Styles */
+.page {
+    background-color: #f8f9fa;
+}
+
+/* Search Container */
+.search-container {
+    padding: 8;
+}
+
+/* Search Bar */
+.search-bar {
+    margin: 8;
+    padding: 0 8;
+    background-color: #ffffff;
+    border-radius: 8;
+    height: 40;
+}
+
+.search-bar-container {
+    margin-bottom: 8;
+    padding: 8;
+    background-color: #ffffff;
+    border-radius: 8;
+}
+
+.search-input {
+    padding: 12 16;
+    font-size: 16;
+    placeholder-color: #95a5a6;
+    background-color: transparent;
+    border-width: 0;
+}
+
+.search-button {
+    width: 40;
+    height: 40;
+    font-size: 20;
+    background-color: transparent;
+    border-width: 0;
+}
+
+/* Collections List */
+.collections-list {
+    background-color: transparent;
+    separator-color: transparent;
+}
+
+.collection-item {
+    background-color: #ffffff;
+    margin: 8;
+    padding: 12;
+    border-radius: 12;
+}
+
+.collection-cover {
+    margin-right: 12;
+}
+
+.collection-image {
+    border-radius: 8;
+    border-width: 1;
+    border-color: #bdc3c7;
+}
+
+.book-count {
+    text-align: center;
+    font-size: 12;
+    color: #7f8c8d;
+    margin-top: 4;
+}
+
+.collection-info {
+    margin-left: 8;
+}
+
+.collection-name {
+    font-size: 16;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 4;
+}
+
+.collection-description {
+    font-size: 14;
+    color: #7f8c8d;
+    margin-bottom: 4;
+}
+
+.collection-date {
+    font-size: 12;
+    color: #95a5a6;
+}
+
+.privacy-icon {
+    font-size: 16;
+    margin: 0 8;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+}
+
+.modal-content {
+    background-color: #ffffff;
+    width: 80%;
+    padding: 20;
+    margin: 20% 10%;
+    border-radius: 12;
+}
+
+.modal-title {
+    font-size: 20;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 16;
+}
+
+.modal-input {
+    font-size: 16;
+    padding: 12;
+    margin: 8 0;
+    border-width: 1;
+    border-color: #bdc3c7;
+    border-radius: 8;
+    background-color: #ffffff;
+}
+
+.description-input {
+    height: 100;
+    margin: 8 0 16 0;
+}
+
+.privacy-toggle {
+    margin: 16 0;
+}
+
+.modal-buttons {
+    margin-top: 16;
+}
+
+.modal-button-primary {
+    background-color: #3498db;
+    color: #ffffff;
+    font-size: 16;
+    padding: 12;
+    border-radius: 8;
+    margin: 0 4;
+}
+
+.modal-button-secondary {
+    background-color: transparent;
+    color: #7f8c8d;
+    font-size: 16;
+    padding: 12;
+    border-radius: 8;
+    margin: 0 4;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 32;
+}
+
+.empty-icon {
+    font-size: 48;
+    margin-bottom: 16;
+}
+
+.empty-message {
+    color: #7f8c8d;
+    font-size: 16;
+    text-align: center;
+    margin-bottom: 16;
+}
+
+.create-button {
+    background-color: #3498db;
+    color: #ffffff;
+    font-size: 16;
+    padding: 12 24;
+    border-radius: 8;
+    margin-top: 16;
+}
+
+/* Loading State */
+.loading-indicator {
+    margin: 20;
+}
+
+/* Error State */
+.error-state {
+    text-align: center;
+    padding: 32;
+}
+
+.error-icon {
+    font-size: 32;
+    margin-bottom: 16;
+}
+
+.error-message {
+    color: #e74c3c;
+    font-size: 16;
+    text-align: center;
+    margin-bottom: 16;
+}
+
+.retry-button {
+    background-color: #3498db;
+    color: #ffffff;
+    font-size: 16;
+    padding: 12 24;
+    border-radius: 8;
+}
+
+/* Dark Theme Support */
+.ns-dark .page {
+    background-color: #1a1a1a;
+}
+
+.ns-dark .search-bar,
+.ns-dark .collection-item,
+.ns-dark .modal-content,
+.ns-dark .modal-input {
+    background-color: #2d2d2d;
+}
+
+.ns-dark .collection-name,
+.ns-dark .modal-title {
+    color: #ecf0f1;
+}
+
+.ns-dark .collection-description,
+.ns-dark .book-count {
+    color: #bdc3c7;
+}
+
+.ns-dark .collection-date {
+    color: #95a5a6;
+}
+
+.ns-dark .modal-input {
+    border-color: #34495e;
+    color: #ecf0f1;
+}
+
+.ns-dark .modal-button-secondary {
+    color: #bdc3c7;
+}
+
+.ns-dark .empty-message {
+    color: #bdc3c7;
+}
+
+/* Action Bar */
+.action-item {
+    font-size: 24;
+    font-weight: bold;
+    color: #3498db;
+    padding: 8 16;
+}

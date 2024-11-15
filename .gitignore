@@ -9,7 +9,9 @@ temp/
 *.js.map
 *.js
 !webpack.config.js
-*.css
+!jest.config.js
+*.css.js
+*.css.map
 
 # Logs
 logs

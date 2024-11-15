@@ -1,0 +1,453 @@
+/* Common Styles */
+.page {
+    background-color: #f8f9fa;
+}
+
+/* Club Header */
+.club-header {
+    background-color: #ffffff;
+    padding: 16;
+    margin-bottom: 8;
+}
+
+.club-info {
+    margin-bottom: 16;
+}
+
+.club-image {
+    border-radius: 8;
+    border-width: 1;
+    border-color: #bdc3c7;
+    margin-right: 16;
+}
+
+.club-details {
+    margin-left: 8;
+}
+
+.club-description {
+    font-size: 14;
+    color: #7f8c8d;
+    margin-bottom: 8;
+}
+
+/* Tags */
+.tags-container {
+    margin: 4 0;
+}
+
+.tag {
+    font-size: 12;
+    color: #7f8c8d;
+    background-color: #ecf0f1;
+    padding: 4 8;
+    margin: 2;
+    border-radius: 4;
+}
+
+/* Stats */
+.stats-container {
+    margin-top: 8;
+}
+
+.stat {
+    font-size: 12;
+    color: #7f8c8d;
+    margin-right: 12;
+}
+
+/* Content Tabs */
+.content-tabs {
+    background-color: #ffffff;
+}
+
+.tab-content {
+    padding: 16;
+}
+
+/* Currently Reading */
+.current-book {
+    background-color: #ffffff;
+    padding: 16;
+    margin-bottom: 16;
+    border-radius: 12;
+}
+
+.book-cover {
+    border-radius: 4;
+    margin-right: 12;
+}
+
+.book-info {
+    margin-left: 8;
+}
+
+.book-title {
+    font-size: 16;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 4;
+}
+
+.book-author {
+    font-size: 14;
+    color: #7f8c8d;
+    margin-bottom: 8;
+}
+
+.progress-info {
+    margin-top: 8;
+}
+
+.reading-progress-bar {
+    height: 4;
+    background-color: #ecf0f1;
+    color: #27ae60;
+}
+
+.progress-text {
+    font-size: 12;
+    color: #27ae60;
+    margin-left: 8;
+}
+
+/* Milestones */
+.milestones-list {
+    background-color: transparent;
+    separator-color: transparent;
+}
+
+.milestone-item {
+    padding: 12;
+    margin: 4 0;
+    background-color: #ffffff;
+    border-radius: 8;
+}
+
+.milestone-complete {
+    color: #27ae60;
+    font-size: 20;
+    margin-right: 12;
+}
+
+.milestone-incomplete {
+    color: #bdc3c7;
+    font-size: 20;
+    margin-right: 12;
+}
+
+.milestone-title {
+    font-size: 14;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.milestone-description {
+    font-size: 12;
+    color: #7f8c8d;
+}
+
+.milestone-date {
+    font-size: 12;
+    color: #95a5a6;
+}
+
+.milestone-progress {
+    font-size: 14;
+    color: #27ae60;
+}
+
+/* Discussions */
+.new-discussion-button {
+    margin: 8;
+    background-color: #3498db;
+    color: #ffffff;
+    font-size: 14;
+    padding: 12;
+    border-radius: 8;
+}
+
+.discussions-list {
+    background-color: transparent;
+    separator-color: transparent;
+}
+
+.discussion-item {
+    background-color: #ffffff;
+    padding: 16;
+    margin: 8;
+    border-radius: 12;
+}
+
+.discussion-title {
+    font-size: 16;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 4;
+}
+
+.discussion-preview {
+    font-size: 14;
+    color: #7f8c8d;
+    margin: 8 0;
+}
+
+.discussion-meta {
+    margin-top: 8;
+    padding-top: 8;
+    border-top-width: 1;
+    border-top-color: #ecf0f1;
+}
+
+.meta-item {
+    font-size: 12;
+    color: #7f8c8d;
+    margin-right: 12;
+}
+
+.meta-date {
+    font-size: 12;
+    color: #95a5a6;
+}
+
+.pin-icon, .lock-icon {
+    font-size: 14;
+}
+
+/* Events */
+.new-event-button {
+    margin: 8;
+    background-color: #3498db;
+    color: #ffffff;
+    font-size: 14;
+    padding: 12;
+    border-radius: 8;
+}
+
+.events-list {
+    background-color: transparent;
+    separator-color: transparent;
+}
+
+.event-item {
+    background-color: #ffffff;
+    padding: 16;
+    margin: 8;
+    border-radius: 12;
+}
+
+.event-title {
+    font-size: 16;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 4;
+}
+
+.event-description {
+    font-size: 14;
+    color: #7f8c8d;
+    margin: 8 0;
+}
+
+.event-meta {
+    margin-top: 8;
+}
+
+.event-type {
+    font-size: 12;
+    color: #3498db;
+    background-color: #ebf5fb;
+    padding: 4 8;
+    border-radius: 4;
+    margin: 0 8;
+}
+
+.attendees-count {
+    font-size: 12;
+    color: #7f8c8d;
+    text-align: right;
+}
+
+/* Members */
+.members-header {
+    padding: 16;
+    background-color: #ffffff;
+    border-bottom-width: 1;
+    border-bottom-color: #ecf0f1;
+}
+
+.members-count {
+    font-size: 16;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.invite-button {
+    background-color: #3498db;
+    color: #ffffff;
+    font-size: 14;
+    padding: 8 16;
+    border-radius: 8;
+}
+
+.members-list {
+    background-color: transparent;
+    separator-color: transparent;
+}
+
+.member-item {
+    background-color: #ffffff;
+    padding: 12;
+    margin: 8;
+    border-radius: 12;
+}
+
+.member-avatar {
+    border-radius: 20;
+    margin-right: 12;
+}
+
+.member-name {
+    font-size: 14;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.member-roles {
+    font-size: 12;
+    color: #3498db;
+}
+
+/* Options Menu */
+.modal-overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+}
+
+.options-menu {
+    background-color: #ffffff;
+    width: 80%;
+    padding: 16;
+    margin: 20% 10%;
+    border-radius: 12;
+}
+
+.option-button {
+    font-size: 16;
+    color: #2c3e50;
+    padding: 12;
+    margin: 4 0;
+    text-align: left;
+    background-color: transparent;
+}
+
+.delete-button {
+    color: #e74c3c;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 32;
+}
+
+.empty-icon {
+    font-size: 48;
+    margin-bottom: 16;
+}
+
+.empty-message {
+    color: #7f8c8d;
+    font-size: 16;
+    margin-bottom: 16;
+}
+
+.action-button {
+    background-color: #3498db;
+    color: #ffffff;
+    font-size: 16;
+    padding: 12 24;
+    border-radius: 8;
+}
+
+/* Dark Theme Support */
+.ns-dark .page {
+    background-color: #1a1a1a;
+}
+
+.ns-dark .club-header,
+.ns-dark .current-book,
+.ns-dark .milestone-item,
+.ns-dark .discussion-item,
+.ns-dark .event-item,
+.ns-dark .member-item,
+.ns-dark .options-menu,
+.ns-dark .members-header {
+    background-color: #2d2d2d;
+}
+
+.ns-dark .book-title,
+.ns-dark .milestone-title,
+.ns-dark .discussion-title,
+.ns-dark .event-title,
+.ns-dark .member-name,
+.ns-dark .members-count,
+.ns-dark .option-button {
+    color: #ecf0f1;
+}
+
+.ns-dark .club-description,
+.ns-dark .book-author,
+.ns-dark .milestone-description,
+.ns-dark .discussion-preview,
+.ns-dark .event-description,
+.ns-dark .meta-item {
+    color: #bdc3c7;
+}
+
+.ns-dark .tag {
+    background-color: #34495e;
+    color: #bdc3c7;
+}
+
+.ns-dark .reading-progress-bar {
+    background-color: #34495e;
+}
+
+.ns-dark .discussion-meta {
+    border-top-color: #34495e;
+}
+
+.ns-dark .members-header {
+    border-bottom-color: #34495e;
+}
+
+.ns-dark .event-type {
+    background-color: #2980b9;
+    color: #ecf0f1;
+}
+
+.ns-dark .empty-message {
+    color: #bdc3c7;
+}
+
+/* Animations */
+.discussion-item,
+.event-item,
+.member-item {
+    animation-name: slideIn;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(20);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

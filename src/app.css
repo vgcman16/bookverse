@@ -1,0 +1,173 @@
+/* Global Styles */
+.page {
+    background-color: #f8f9fa;
+}
+
+/* Theme-specific styles */
+.ns-dark .page {
+    background-color: #1a1a1a;
+}
+
+.ns-dark Label {
+    color: #ffffff;
+}
+
+/* Typography */
+.title {
+    font-size: 24;
+    font-weight: bold;
+    margin: 16 0 8 0;
+    color: #2c3e50;
+}
+
+.subtitle {
+    font-size: 16;
+    color: #7f8c8d;
+    margin: 0 0 16 0;
+}
+
+.section-title {
+    font-size: 20;
+    font-weight: bold;
+    margin: 16 0 8 0;
+    color: #34495e;
+}
+
+/* Common Components */
+.action-button {
+    background-color: #3498db;
+    color: white;
+    padding: 12;
+    border-radius: 8;
+    margin: 8;
+}
+
+.action-button:highlighted {
+    background-color: #2980b9;
+}
+
+/* Lists */
+.book-list, .club-list {
+    height: auto;
+    separator-color: transparent;
+    margin: 8 0;
+}
+
+.book-item, .club-item {
+    padding: 12;
+    margin: 8;
+    background-color: white;
+    border-radius: 8;
+}
+
+.ns-dark .book-item, .ns-dark .club-item {
+    background-color: #2d2d2d;
+}
+
+/* Book Items */
+.book-cover {
+    border-radius: 4;
+    margin-right: 12;
+}
+
+.book-title {
+    font-size: 16;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.book-author {
+    font-size: 14;
+    color: #7f8c8d;
+    margin-top: 4;
+}
+
+.reading-progress-bar {
+    height: 4;
+    margin-top: 8;
+    background-color: #e0e0e0;
+    color: #27ae60;
+}
+
+/* Book Clubs */
+.club-image {
+    border-radius: 25;
+    margin-right: 12;
+}
+
+.club-name {
+    font-size: 16;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.club-info {
+    font-size: 14;
+    color: #7f8c8d;
+    margin-top: 4;
+}
+
+/* Reading Challenges */
+.challenge-grid {
+    margin: 8;
+}
+
+.challenge-card {
+    background-color: white;
+    border-radius: 8;
+    padding: 16;
+    margin: 4;
+    text-align: center;
+}
+
+.ns-dark .challenge-card {
+    background-color: #2d2d2d;
+}
+
+.challenge-icon {
+    font-size: 32;
+    margin-bottom: 8;
+}
+
+.challenge-title {
+    font-size: 14;
+    color: #7f8c8d;
+    margin-bottom: 4;
+}
+
+.challenge-progress {
+    font-size: 18;
+    font-weight: bold;
+    color: #27ae60;
+}
+
+/* Containers */
+.home-container {
+    padding: 16;
+}
+
+.welcome-section {
+    margin-bottom: 24;
+}
+
+.quick-actions {
+    margin-bottom: 24;
+}
+
+.reading-progress {
+    margin-bottom: 24;
+}
+
+.book-clubs {
+    margin-bottom: 24;
+}
+
+.reading-challenges {
+    margin-bottom: 24;
+}
+
+/* Theme Toggle */
+.theme-toggle {
+    font-size: 20;
+    padding: 8 16;
+}

@@ -1,0 +1,170 @@
+/* Login Container */
+.login-container {
+    padding: 20;
+}
+
+/* Logo Section */
+.logo-container {
+    margin-bottom: 30;
+}
+
+.logo-emoji {
+    font-size: 48;
+    margin-bottom: 10;
+}
+
+.logo-text {
+    font-size: 32;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 5;
+}
+
+.subtitle {
+    font-size: 16;
+    color: #7f8c8d;
+}
+
+/* Form Elements */
+.input-field {
+    margin-bottom: 20;
+}
+
+.input-label {
+    font-size: 14;
+    color: #34495e;
+    margin-bottom: 5;
+}
+
+.input {
+    font-size: 16;
+    padding: 12;
+    border-width: 1;
+    border-color: #bdc3c7;
+    border-radius: 8;
+    background-color: #ffffff;
+}
+
+.input:focus {
+    border-color: #3498db;
+}
+
+/* Error Message */
+.error-message {
+    color: #e74c3c;
+    font-size: 14;
+    margin: 5 0;
+    text-align: center;
+}
+
+/* Buttons */
+.btn {
+    height: 50;
+    border-radius: 8;
+    font-size: 16;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background-color: #3498db;
+    color: #ffffff;
+}
+
+.btn-primary:highlighted {
+    background-color: #2980b9;
+}
+
+.btn-outline {
+    border-width: 1;
+    border-color: #3498db;
+    color: #3498db;
+    background-color: transparent;
+}
+
+.btn-outline:highlighted {
+    background-color: #f8f9fa;
+}
+
+/* Social Login */
+.social-login {
+    margin-top: 30;
+}
+
+.social-buttons {
+    margin-top: 10;
+}
+
+/* Sign Up and Forgot Password Links */
+.sign-up-container {
+    margin-top: 30;
+}
+
+.sign-up-link {
+    color: #3498db;
+    font-weight: bold;
+    margin-top: 5;
+}
+
+.forgot-password-link {
+    color: #7f8c8d;
+    margin-top: 20;
+}
+
+/* Dark Theme Support */
+.ns-dark .logo-text {
+    color: #ecf0f1;
+}
+
+.ns-dark .subtitle {
+    color: #bdc3c7;
+}
+
+.ns-dark .input-label {
+    color: #ecf0f1;
+}
+
+.ns-dark .input {
+    background-color: #34495e;
+    border-color: #2c3e50;
+    color: #ecf0f1;
+}
+
+.ns-dark .btn-outline {
+    border-color: #3498db;
+    color: #3498db;
+}
+
+.ns-dark .btn-outline:highlighted {
+    background-color: #2c3e50;
+}
+
+.ns-dark .sign-up-link {
+    color: #3498db;
+}
+
+.ns-dark .forgot-password-link {
+    color: #bdc3c7;
+}
+
+/* Loading State */
+.btn-primary:disabled {
+    opacity: 0.7;
+}
+
+/* Animations */
+.form {
+    animation-name: slideUp;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
