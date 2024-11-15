@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="page">
+    <ActionBar title="Profile" class="action-bar">
+        <NavigationButton visibility="collapsed" />
+        <ActionBar.actionItems>
+            <ActionItem ios.position="right" 
+                       android.position="actionBar"
+                       tap="{{ onEditProfile }}">
+                <Label text="Edit" class="action-item" />
+            </ActionItem>
+        </ActionBar.actionItems>
+    </ActionBar>
+
+    <ScrollView>
+        <StackLayout class="profile-container">
+            <!-- Profile Header -->
+            <GridLayout rows="auto" columns="*, auto" class="profile-header">
+                <StackLayout col="0" class="profile-info">
+                    <Label text="{{ user.displayName }}" class="profile-name" />
+                    <Label text="{{ user.email }}" class="profile-email" />
+                </StackLayout>
+                <Image src="{{ user.photoUri }}" 
+                       width="80" height="80" 
+                       class="profile-image" 
+                       col="1" />
+            </GridLayout>
+
+            <!-- Stats Section -->
+            <GridLayout rows="auto" columns="*, *, *" class="stats-container">
+                <StackLayout col="0" class="stat-item">
+                    <Label text="{{ booksRead }}" class="stat-number" />
+                    <Label text="Books Read" class="stat-label" />
+                </StackLayout>
+                <StackLayout col="1" class="stat-item">
+                    <Label text="{{ reviewsCount }}" class="stat-number" />
+                    <Label text="Reviews" class="stat-label" />
+                </StackLayout>
+                <StackLayout col="2" class="stat-item">
+                    <Label text="{{ followersCount }}" class="stat-number" />
+                    <Label text="Followers" class="stat-label" />
+                </StackLayout>
+            </GridLayout>
+
+            <!-- Reading Progress -->
+            <StackLayout class="section">
+                <Label text="Current Reading Goal" class="section-title" />
+                <GridLayout rows="auto, auto" columns="*, auto" class="reading-goal">
+                    <Progress value="{{ readingProgress }}" 
+                             maxValue="100" 
+                             class="reading-progress-bar" 
+                             row="0" col="0" colSpan="2" />
+                    <Label text="{{ booksRead }} of {{ yearlyGoal }} books" 
+                           class="progress-text" 
+                           row="1" col="0" />
+                    <Label text="{{ readingProgressPercent }}%" 
+                           class="progress-percent" 
+                           row="1" col="1" />
+                </GridLayout>
+            </StackLayout>
+
+            <!-- Preferences Section -->
+            <StackLayout class="section">
+                <Label text="Preferences" class="section-title" />
+                <GridLayout rows="auto, auto, auto" columns="*, auto" class="preferences-list">
+                    <!-- Theme Preference -->
+                    <Label text="Dark Theme" class="preference-label" row="0" col="0" />
+                    <Switch checked="{{ preferences.theme === 'dark' }}" 
+                            tap="{{ onThemeToggle }}"
+                            class="preference-switch" 
+                            row="0" col="1" />
+
+                    <!-- Notifications -->
+                    <Label text="Notifications" class="preference-label" row="1" col="0" />
+                    <Switch checked="{{ preferences.notifications.pushEnabled }}" 
+                            tap="{{ onNotificationsToggle }}"
+                            class="preference-switch" 
+                            row="1" col="1" />
+
+                    <!-- Privacy -->
+                    <Label text="Public Profile" class="preference-label" row="2" col="0" />
+                    <Switch checked="{{ preferences.privacy.profileVisibility === 'public' }}" 
+                            tap="{{ onPrivacyToggle }}"
+                            class="preference-switch" 
+                            row="2" col="1" />
+                </GridLayout>
+            </StackLayout>
+
+            <!-- Actions Section -->
+            <StackLayout class="section">
+                <Button text="My Reading Lists" 
+                        tap="{{ onReadingListsTap }}" 
+                        class="action-button" />
+                <Button text="My Reviews" 
+                        tap="{{ onReviewsTap }}" 
+                        class="action-button" />
+                <Button text="Book Clubs" 
+                        tap="{{ onBookClubsTap }}" 
+                        class="action-button" />
+                <Button text="Settings" 
+                        tap="{{ onSettingsTap }}" 
+                        class="action-button" />
+                <Button text="Sign Out" 
+                        tap="{{ onSignOutTap }}" 
+                        class="sign-out-button" />
+            </StackLayout>
+        </StackLayout>
+    </ScrollView>
+</Page>

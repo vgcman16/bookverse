@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="page">
+    <ActionBar title="Edit Profile" class="action-bar">
+        <NavigationButton text="Cancel" android.systemIcon="ic_menu_back" />
+        <ActionBar.actionItems>
+            <ActionItem text="Save" 
+                       ios.position="right" 
+                       android.position="actionBar"
+                       tap="{{ onSaveProfile }}"
+                       isEnabled="{{ !isLoading }}" />
+        </ActionBar.actionItems>
+    </ActionBar>
+
+    <ScrollView>
+        <StackLayout class="profile-edit-container">
+            <!-- Profile Image Section -->
+            <StackLayout class="image-section">
+                <Image src="{{ photoUri }}" 
+                       width="120" height="120" 
+                       class="profile-image" />
+                <Button text="Change Photo" 
+                        tap="{{ onChangePhotoTap }}" 
+                        class="photo-button" />
+            </StackLayout>
+
+            <!-- Form Fields -->
+            <StackLayout class="form-section">
+                <!-- Display Name -->
+                <Label text="Display Name" class="input-label" />
+                <TextField text="{{ displayName }}" 
+                          hint="Enter your display name"
+                          class="input" />
+
+                <!-- Bio -->
+                <Label text="Bio" class="input-label" />
+                <TextView text="{{ bio }}" 
+                          hint="Tell us about yourself"
+                          class="input bio-input" />
+
+                <!-- Reading Preferences -->
+                <Label text="Reading Preferences" class="section-header" />
+                <GridLayout rows="auto, auto, auto" columns="*, auto" class="preferences-grid">
+                    <!-- Favorite Genres -->
+                    <Label text="Favorite Genres" class="input-label" row="0" colSpan="2" />
+                    <WrapLayout row="1" colSpan="2" class="genres-container">
+                        <Repeater items="{{ genres }}">
+                            <Repeater.itemTemplate>
+                                <Label text="{{ name }}" 
+                                       class="{{ selected ? 'genre-tag-selected' : 'genre-tag' }}"
+                                       tap="{{ $parents['ProfileEditViewModel'].onGenreSelect }}" />
+                            </Repeater.itemTemplate>
+                        </Repeater>
+                    </WrapLayout>
+
+                    <!-- Reading Goal -->
+                    <Label text="Yearly Reading Goal" class="input-label" row="2" col="0" />
+                    <TextField text="{{ yearlyGoal }}" 
+                              keyboardType="number"
+                              class="input goal-input" 
+                              row="2" col="1" />
+                </GridLayout>
+
+                <!-- Privacy Settings -->
+                <Label text="Privacy Settings" class="section-header" />
+                <GridLayout rows="auto, auto, auto" columns="*, auto" class="privacy-grid">
+                    <!-- Profile Visibility -->
+                    <Label text="Public Profile" class="setting-label" row="0" col="0" />
+                    <Switch checked="{{ privacy.profileVisibility === 'public' }}" 
+                            tap="{{ onPrivacyToggle }}"
+                            class="setting-switch" 
+                            row="0" col="1" />
+
+                    <!-- Show Reading Progress -->
+                    <Label text="Show Reading Progress" class="setting-label" row="1" col="0" />
+                    <Switch checked="{{ privacy.showReadingProgress }}" 
+                            tap="{{ onProgressVisibilityToggle }}"
+                            class="setting-switch" 
+                            row="1" col="1" />
+
+                    <!-- Allow Messages -->
+                    <Label text="Allow Messages" class="setting-label" row="2" col="0" />
+                    <Switch checked="{{ privacy.allowMessages }}" 
+                            tap="{{ onMessagesToggle }}"
+                            class="setting-switch" 
+                            row="2" col="1" />
+                </GridLayout>
+
+                <!-- Notification Preferences -->
+                <Label text="Notification Settings" class="section-header" />
+                <GridLayout rows="auto, auto, auto" columns="*, auto" class="notifications-grid">
+                    <!-- Push Notifications -->
+                    <Label text="Push Notifications" class="setting-label" row="0" col="0" />
+                    <Switch checked="{{ notifications.pushEnabled }}" 
+                            tap="{{ onPushNotificationsToggle }}"
+                            class="setting-switch" 
+                            row="0" col="1" />
+
+                    <!-- Email Notifications -->
+                    <Label text="Email Notifications" class="setting-label" row="1" col="0" />
+                    <Switch checked="{{ notifications.emailEnabled }}" 
+                            tap="{{ onEmailNotificationsToggle }}"
+                            class="setting-switch" 
+                            row="1" col="1" />
+
+                    <!-- Book Club Updates -->
+                    <Label text="Book Club Updates" class="setting-label" row="2" col="0" />
+                    <Switch checked="{{ notifications.bookClubUpdates }}" 
+                            tap="{{ onBookClubUpdatesToggle }}"
+                            class="setting-switch" 
+                            row="2" col="1" />
+                </GridLayout>
+            </StackLayout>
+
+            <!-- Loading Indicator -->
+            <ActivityIndicator busy="{{ isLoading }}" 
+                             visibility="{{ isLoading ? 'visible' : 'collapsed' }}"
+                             class="loading-indicator" />
+
+            <!-- Error Message -->
+            <Label text="{{ errorMessage }}" 
+                   visibility="{{ errorMessage ? 'visible' : 'collapsed' }}"
+                   class="error-message" 
+                   textWrap="true" />
+        </StackLayout>
+    </ScrollView>
+</Page>
