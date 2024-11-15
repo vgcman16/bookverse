@@ -60,16 +60,30 @@
                            visibility="{{ confirmPasswordError ? 'visible' : 'collapsed' }}" />
                 </StackLayout>
 
-                <!-- Terms and Conditions -->
-                <GridLayout columns="auto, *" class="terms-container">
-                    <Switch checked="{{ acceptTerms }}" col="0" />
-                    <StackLayout col="1" orientation="horizontal" class="m-l-10">
-                        <Label text="I accept the " />
-                        <Label text="Terms and Conditions" 
-                               class="link" 
-                               tap="{{ onViewTerms }}" />
-                    </StackLayout>
-                </GridLayout>
+                <!-- Terms and Privacy Policy -->
+                <StackLayout class="agreements-container">
+                    <!-- Terms -->
+                    <GridLayout columns="auto, *" class="terms-container">
+                        <Switch checked="{{ acceptTerms }}" col="0" />
+                        <StackLayout col="1" orientation="horizontal" class="m-l-10">
+                            <Label text="I accept the " />
+                            <Label text="Terms and Conditions" 
+                                   class="link" 
+                                   tap="{{ onViewTerms }}" />
+                        </StackLayout>
+                    </GridLayout>
+
+                    <!-- Privacy Policy -->
+                    <GridLayout columns="auto, *" class="terms-container m-t-10">
+                        <Switch checked="{{ acceptPrivacy }}" col="0" />
+                        <StackLayout col="1" orientation="horizontal" class="m-l-10">
+                            <Label text="I accept the " />
+                            <Label text="Privacy Policy" 
+                                   class="link" 
+                                   tap="{{ onViewPrivacy }}" />
+                        </StackLayout>
+                    </GridLayout>
+                </StackLayout>
 
                 <!-- Error Message -->
                 <Label text="{{ errorMessage }}" 

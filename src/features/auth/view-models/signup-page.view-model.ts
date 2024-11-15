@@ -12,6 +12,7 @@ export class SignupPageViewModel extends Observable {
     public password: string = '';
     public confirmPassword: string = '';
     public acceptTerms: boolean = false;
+    public acceptPrivacy: boolean = false;
     public isLoading: boolean = false;
 
     public displayNameError: string = '';
@@ -57,6 +58,20 @@ export class SignupPageViewModel extends Observable {
                 if (accepted) {
                     this.acceptTerms = true;
                     this.notifyPropertyChange('acceptTerms', true);
+                    this.clearErrors();
+                }
+            }
+        });
+    }
+
+    public onViewPrivacy() {
+        this.navigationService.navigate('features/auth/views/privacy-policy-page', {
+            showAcceptButton: true,
+            acceptCallback: (accepted: boolean) => {
+                if (accepted) {
+                    this.acceptPrivacy = true;
+                    this.notifyPropertyChange('acceptPrivacy', true);
+                    this.clearErrors();
                 }
             }
         });
@@ -109,9 +124,9 @@ export class SignupPageViewModel extends Observable {
             isValid = false;
         }
 
-        // Terms validation
-        if (!this.acceptTerms) {
-            this.errorMessage = 'Please accept the Terms and Conditions';
+        // Terms and Privacy validation
+        if (!this.acceptTerms || !this.acceptPrivacy) {
+            this.errorMessage = 'Please accept both Terms and Conditions and Privacy Policy';
             isValid = false;
         }
 

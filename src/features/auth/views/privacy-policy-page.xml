@@ -1,0 +1,77 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="page">
+    <ActionBar title="Privacy Policy" class="action-bar">
+        <NavigationButton text="Back" android.systemIcon="ic_menu_back" />
+    </ActionBar>
+
+    <ScrollView>
+        <StackLayout class="p-20">
+            <Label text="Privacy Policy" class="terms-title" />
+            
+            <Label text="Last updated: {{ lastUpdated }}" class="terms-date" />
+
+            <StackLayout class="terms-section">
+                <Label text="1. Information We Collect" class="section-title" />
+                <Label text="We collect information that you provide directly to us when using BookVerse:" textWrap="true" class="section-content" />
+                <StackLayout class="list-container">
+                    <Label text="• Account information (email, display name)" textWrap="true" class="list-item" />
+                    <Label text="• Reading preferences and history" textWrap="true" class="list-item" />
+                    <Label text="• Reviews and ratings" textWrap="true" class="list-item" />
+                    <Label text="• Book collections and lists" textWrap="true" class="list-item" />
+                </StackLayout>
+            </StackLayout>
+
+            <StackLayout class="terms-section">
+                <Label text="2. How We Use Your Information" class="section-title" />
+                <Label text="We use the collected information to:" textWrap="true" class="section-content" />
+                <StackLayout class="list-container">
+                    <Label text="• Provide and improve our services" textWrap="true" class="list-item" />
+                    <Label text="• Personalize your reading experience" textWrap="true" class="list-item" />
+                    <Label text="• Send notifications about activity" textWrap="true" class="list-item" />
+                    <Label text="• Analyze usage patterns" textWrap="true" class="list-item" />
+                </StackLayout>
+            </StackLayout>
+
+            <StackLayout class="terms-section">
+                <Label text="3. Information Sharing" class="section-title" />
+                <Label text="We do not sell your personal information. We may share your information:" textWrap="true" class="section-content" />
+                <StackLayout class="list-container">
+                    <Label text="• With other users (based on your privacy settings)" textWrap="true" class="list-item" />
+                    <Label text="• With service providers" textWrap="true" class="list-item" />
+                    <Label text="• For legal requirements" textWrap="true" class="list-item" />
+                </StackLayout>
+            </StackLayout>
+
+            <StackLayout class="terms-section">
+                <Label text="4. Data Security" class="section-title" />
+                <Label text="We implement appropriate security measures to protect your personal information. However, no method of transmission over the internet is 100% secure." textWrap="true" class="section-content" />
+            </StackLayout>
+
+            <StackLayout class="terms-section">
+                <Label text="5. Your Rights" class="section-title" />
+                <Label text="You have the right to:" textWrap="true" class="section-content" />
+                <StackLayout class="list-container">
+                    <Label text="• Access your personal information" textWrap="true" class="list-item" />
+                    <Label text="• Correct inaccurate data" textWrap="true" class="list-item" />
+                    <Label text="• Request deletion of your data" textWrap="true" class="list-item" />
+                    <Label text="• Opt out of communications" textWrap="true" class="list-item" />
+                </StackLayout>
+            </StackLayout>
+
+            <StackLayout class="terms-section">
+                <Label text="6. Changes to Privacy Policy" class="section-title" />
+                <Label text="We may update this privacy policy from time to time. We will notify you of any changes by posting the new policy on this page." textWrap="true" class="section-content" />
+            </StackLayout>
+
+            <StackLayout class="terms-section">
+                <Label text="7. Contact Us" class="section-title" />
+                <Label text="If you have questions about this privacy policy, please contact us at privacy@bookverse.com" textWrap="true" class="section-content" />
+            </StackLayout>
+
+            <!-- Accept Button (only shown when opened from sign-up) -->
+            <Button text="Accept Privacy Policy" 
+                    tap="{{ onAcceptPrivacy }}" 
+                    class="btn btn-primary m-t-20"
+                    visibility="{{ showAcceptButton ? 'visible' : 'collapsed' }}" />
+        </StackLayout>
+    </ScrollView>
+</Page>
