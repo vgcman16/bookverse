@@ -140,8 +140,8 @@ A comprehensive mobile application for book lovers built with NativeScript and T
 - ✅ Club Notifications
 - ✅ Event Notifications
 - ✅ System Notifications
-- ⬜ Email Notifications
-- ⬜ Custom Notification Preferences
+- ✅ Email Notifications
+- ✅ Custom Notification Preferences
 
 ### Admin Features
 - ⬜ Admin Dashboard
