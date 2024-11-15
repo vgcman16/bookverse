@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="page">
+    <ActionBar class="action-bar">
+        <NavigationButton android.systemIcon="ic_menu_back" />
+        <Label text="Notifications" class="action-bar-title" />
+        <ActionItem ios.position="right" 
+                   android.position="actionBar"
+                   tap="{{ onClearAll }}"
+                   visibility="{{ notifications.length > 0 ? 'visible' : 'collapsed' }}">
+            <Label text="Clear All" class="action-item" />
+        </ActionItem>
+    </ActionBar>
+
+    <GridLayout rows="auto, *">
+        <!-- Filter Tabs -->
+        <TabStrip row="0" selectedIndex="{{ selectedTabIndex }}" class="notification-tabs">
+            <TabStripItem>
+                <Label text="All" />
+                <Label text="{{ totalCount }}" class="badge" />
+            </TabStripItem>
+            <TabStripItem>
+                <Label text="Unread" />
+                <Label text="{{ unreadCount }}" class="badge" />
+            </TabStripItem>
+            <TabStripItem>
+                <Label text="Social" />
+                <Label text="{{ socialCount }}" class="badge" />
+            </TabStripItem>
+            <TabStripItem>
+                <Label text="Book Clubs" />
+                <Label text="{{ clubCount }}" class="badge" />
+            </TabStripItem>
+            <TabStripItem>
+                <Label text="Challenges" />
+                <Label text="{{ challengeCount }}" class="badge" />
+            </TabStripItem>
+        </TabStrip>
+
+        <!-- Notification List -->
+        <GridLayout row="1" class="notifications-container">
+            <ListView items="{{ notifications }}" 
+                      class="notifications-list"
+                      visibility="{{ !isLoading }}">
+                <ListView.itemTemplate>
+                    <GridLayout rows="auto" columns="auto, *, auto" class="notification-item {{ isRead ? 'read' : 'unread' }}">
+                        <!-- Icon -->
+                        <Image row="0" col="0" 
+                               src="{{ icon }}"
+                               class="notification-icon" />
+                        
+                        <!-- Content -->
+                        <StackLayout row="0" col="1" class="notification-content">
+                            <Label text="{{ title }}" 
+                                   class="notification-title" />
+                            <Label text="{{ body }}" 
+                                   class="notification-body"
+                                   textWrap="true" />
+                            <Label text="{{ timestamp | timeAgo }}"
+                                   class="notification-time" />
+                        </StackLayout>
+
+                        <!-- Actions -->
+                        <StackLayout row="0" col="2" class="notification-actions">
+                            <Button text="&#xf142;" 
+                                    class="fas action-button"
+                                    tap="{{ onShowActions }}" />
+                        </StackLayout>
+                    </GridLayout>
+                </ListView.itemTemplate>
+            </ListView>
+
+            <!-- Loading State -->
+            <ActivityIndicator busy="{{ isLoading }}" 
+                             class="activity-indicator" />
+
+            <!-- Empty State -->
+            <StackLayout class="empty-state"
+                        visibility="{{ !isLoading && notifications.length === 0 ? 'visible' : 'collapsed' }}">
+                <Label text="🔔" class="empty-icon" />
+                <Label text="No notifications" class="empty-title" />
+                <Label text="You're all caught up! New notifications will appear here." 
+                       class="empty-message"
+                       textWrap="true" />
+            </StackLayout>
+        </GridLayout>
+    </GridLayout>
+
+    <!-- Actions Menu Modal -->
+    <AbsoluteLayout class="modal-overlay"
+                    visibility="{{ isShowingActions ? 'visible' : 'collapsed' }}"
+                    tap="{{ onHideActions }}">
+        <StackLayout class="actions-menu">
+            <Button text="Mark as Read" 
+                    tap="{{ onMarkAsRead }}"
+                    class="menu-item"
+                    visibility="{{ !selectedNotification.isRead ? 'visible' : 'collapsed' }}" />
+            <Button text="Mark as Unread" 
+                    tap="{{ onMarkAsUnread }}"
+                    class="menu-item"
+                    visibility="{{ selectedNotification.isRead ? 'visible' : 'collapsed' }}" />
+            <Button text="Delete" 
+                    tap="{{ onDelete }}"
+                    class="menu-item delete" />
+        </StackLayout>
+    </AbsoluteLayout>
+
+    <!-- Settings Menu Modal -->
+    <AbsoluteLayout class="modal-overlay"
+                    visibility="{{ isShowingSettings ? 'visible' : 'collapsed' }}"
+                    tap="{{ onHideSettings }}">
+        <StackLayout class="settings-menu">
+            <Label text="Notification Settings" class="settings-title" />
+            
+            <!-- General Settings -->
+            <GridLayout rows="auto, auto" columns="*, auto" class="settings-section">
+                <Label row="0" col="0" text="Enable Notifications" class="setting-label" />
+                <Switch row="0" col="1" checked="{{ preferences.enabled }}" />
+                
+                <Label row="1" col="0" text="Show Badges" class="setting-label" />
+                <Switch row="1" col="1" checked="{{ preferences.badge }}" />
+            </GridLayout>
+
+            <!-- Quiet Hours -->
+            <StackLayout class="settings-section">
+                <Label text="Quiet Hours" class="section-title" />
+                <GridLayout rows="auto, auto" columns="*, auto">
+                    <Label row="0" col="0" text="Enable Quiet Hours" class="setting-label" />
+                    <Switch row="0" col="1" checked="{{ preferences.quiet.enabled }}" />
+                    
+                    <Label row="1" col="0" text="Quiet Hours Period" class="setting-label" />
+                    <StackLayout row="1" col="1" orientation="horizontal">
+                        <TextField text="{{ preferences.quiet.startTime }}" 
+                                 hint="Start"
+                                 class="time-input" />
+                        <Label text="-" class="time-separator" />
+                        <TextField text="{{ preferences.quiet.endTime }}"
+                                 hint="End"
+                                 class="time-input" />
+                    </StackLayout>
+                </GridLayout>
+            </StackLayout>
+
+            <!-- Notification Types -->
+            <StackLayout class="settings-section">
+                <Label text="Notification Types" class="section-title" />
+                <Repeater items="{{ notificationTypes }}">
+                    <Repeater.itemTemplate>
+                        <GridLayout columns="*, auto" class="type-item">
+                            <Label col="0" text="{{ name }}" class="setting-label" />
+                            <Switch col="1" checked="{{ enabled }}" />
+                        </GridLayout>
+                    </Repeater.itemTemplate>
+                </Repeater>
+            </StackLayout>
+
+            <Button text="Save Changes"
+                    tap="{{ onSaveSettings }}"
+                    class="save-button" />
+        </StackLayout>
+    </AbsoluteLayout>
+</Page>

@@ -25,6 +25,8 @@
     "@nativescript/core": "~8.5.0",
     "@nativescript/firebase-auth": "^3.3.2",
     "@nativescript/firebase-core": "^3.3.2",
+    "@nativescript/firebase-messaging": "^3.3.2",
+    "@nativescript/local-notifications": "^6.3.0",
     "@nativescript/theme": "~3.0.2",
     "firebase": "^11.0.2",
     "rxjs": "~7.8.1"
