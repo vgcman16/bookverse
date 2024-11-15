@@ -61,9 +61,14 @@
                 </StackLayout>
 
                 <!-- Terms and Conditions -->
-                <GridLayout columns="auto, *" class="terms-container m-y-10">
+                <GridLayout columns="auto, *" class="terms-container">
                     <Switch checked="{{ acceptTerms }}" col="0" />
-                    <Label text="I accept the Terms and Conditions" col="1" class="m-l-10" textWrap="true" />
+                    <StackLayout col="1" orientation="horizontal" class="m-l-10">
+                        <Label text="I accept the " />
+                        <Label text="Terms and Conditions" 
+                               class="link" 
+                               tap="{{ onViewTerms }}" />
+                    </StackLayout>
                 </GridLayout>
 
                 <!-- Error Message -->

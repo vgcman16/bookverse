@@ -16,6 +16,9 @@ export interface NavigationOptions extends NavigationEntry {
     activityId?: string;
     mode?: string;
     onSelect?: (item: any) => void;
+    // Terms page specific options
+    showAcceptButton?: boolean;
+    acceptCallback?: (accepted: boolean) => void;
 }
 
 export class NavigationService {
@@ -58,7 +61,9 @@ export class NavigationService {
                 eventId: options.eventId,
                 activityId: options.activityId,
                 mode: options.mode,
-                onSelect: options.onSelect
+                onSelect: options.onSelect,
+                showAcceptButton: options.showAcceptButton,
+                acceptCallback: options.acceptCallback
             }
         };
 
@@ -125,7 +130,9 @@ export class NavigationService {
                 eventId: options.eventId,
                 activityId: options.activityId,
                 mode: options.mode,
-                onSelect: options.onSelect
+                onSelect: options.onSelect,
+                showAcceptButton: options.showAcceptButton,
+                acceptCallback: options.acceptCallback
             },
             clearHistory: false
         };

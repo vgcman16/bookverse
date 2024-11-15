@@ -50,6 +50,18 @@ export class SignupPageViewModel extends Observable {
         }
     }
 
+    public onViewTerms() {
+        this.navigationService.navigate('features/auth/views/terms-page', {
+            showAcceptButton: true,
+            acceptCallback: (accepted: boolean) => {
+                if (accepted) {
+                    this.acceptTerms = true;
+                    this.notifyPropertyChange('acceptTerms', true);
+                }
+            }
+        });
+    }
+
     public onBackToLogin() {
         this.navigationService.navigate('features/auth/views/login-page');
     }
