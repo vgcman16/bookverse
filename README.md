@@ -62,7 +62,11 @@ A comprehensive mobile application for book lovers built with NativeScript and T
 - ✅ Club Reading Management
 - ✅ Member Management
 - ✅ Role-based Permissions
-- ⬜ Discussion Forums
+- ✅ Discussion Forums
+- ✅ Discussion Management
+- ✅ Nested Replies
+- ✅ Discussion Interactions (Like, Reply)
+- ✅ Discussion Moderation
 - ⬜ Event Planning System
 - ⬜ Reading Challenges
 - ⬜ User Following System
@@ -71,6 +75,7 @@ A comprehensive mobile application for book lovers built with NativeScript and T
 - ✅ Book Collections
 - ✅ Custom Collections
 - ✅ Club Collections
+- ✅ Discussion Threading
 - ⬜ Offline Access
 - ⬜ Content Sync System
 - ⬜ Export/Import System
@@ -94,6 +99,7 @@ A comprehensive mobile application for book lovers built with NativeScript and T
 - ✅ Review System UI
 - ✅ Club Management UI
 - ✅ Club Details UI
+- ✅ Discussion System UI
 - ⬜ Font Size Adjustment
 - ⬜ Reading Mode
 - ⬜ Accessibility Features
@@ -124,6 +130,7 @@ A comprehensive mobile application for book lovers built with NativeScript and T
 - ✅ Review System Implementation
 - ✅ Book Clubs Implementation
 - ✅ Club Details Implementation
+- ✅ Discussion System Implementation
 - ⬜ Unit Testing Setup
 - ⬜ E2E Testing Setup
 - ⬜ CI/CD Pipeline
