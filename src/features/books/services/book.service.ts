@@ -59,7 +59,6 @@ export class BookService {
             collections: []
         };
 
-        // TODO: Save to backend/database
         await this.saveUserBook(userBook);
 
         if (status === ReadingStatus.Reading) {
@@ -82,7 +81,6 @@ export class BookService {
             lastUpdated: new Date()
         };
 
-        // TODO: Save to backend/database
         await this.saveUserBook(updatedBook);
 
         // Update currently reading list if necessary
@@ -110,10 +108,7 @@ export class BookService {
             lastUpdated: new Date()
         };
 
-        // TODO: Save to backend/database
         await this.saveUserBook(updatedBook);
-
-        // Update reading stats
         await this.updateReadingStats();
 
         return updatedBook;
@@ -137,9 +132,7 @@ export class BookService {
             updatedAt: new Date()
         };
 
-        // TODO: Save to backend/database
         await this.saveCollection(collection);
-
         return collection;
     }
 
@@ -167,6 +160,13 @@ export class BookService {
         }
     }
 
+    // User Book Access
+    public async getUserBook(bookId: string): Promise<UserBook | null> {
+        // TODO: Implement backend/database fetch
+        // For now, return null to indicate book not in user's library
+        return null;
+    }
+
     // Observables
     public get currentlyReading$(): Observable<UserBook[]> {
         return this.currentlyReadingSubject.asObservable();
@@ -177,11 +177,6 @@ export class BookService {
     }
 
     // Private Helper Methods
-    private async getUserBook(bookId: string): Promise<UserBook | null> {
-        // TODO: Implement backend/database fetch
-        return null;
-    }
-
     private async saveUserBook(book: UserBook): Promise<void> {
         // TODO: Implement backend/database save
     }

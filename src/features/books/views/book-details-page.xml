@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="page">
+    <ActionBar class="action-bar">
+        <NavigationButton android.systemIcon="ic_menu_back" />
+        <ActionBar.title>
+            <GridLayout columns="*, auto">
+                <Label col="0" text="{{ book.title }}" class="action-bar-title" textWrap="true" />
+                <Button col="1" 
+                        text="{{ isFavorite ? '❤️' : '🤍' }}" 
+                        tap="{{ onToggleFavorite }}"
+                        class="favorite-button" />
+            </GridLayout>
+        </ActionBar.title>
+    </ActionBar>
+
+    <ScrollView>
+        <StackLayout class="book-details-container">
+            <!-- Loading State -->
+            <ActivityIndicator busy="{{ isLoading }}" 
+                             visibility="{{ isLoading ? 'visible' : 'collapsed' }}"
+                             class="loading-indicator" />
+
+            <!-- Error State -->
+            <StackLayout visibility="{{ errorMessage ? 'visible' : 'collapsed' }}"
+                        class="error-state">
+                <Label text="❌" class="error-icon" />
+                <Label text="{{ errorMessage }}" class="error-message" textWrap="true" />
+                <Button text="Try Again" 
+                        tap="{{ onRetry }}"
+                        class="retry-button" />
+            </StackLayout>
+
+            <!-- Book Content -->
+            <StackLayout visibility="{{ !isLoading && !errorMessage ? 'visible' : 'collapsed' }}">
+                <!-- Book Header -->
+                <GridLayout rows="auto" columns="auto, *" class="book-header">
+                    <Image src="{{ book.imageLinks.thumbnail }}" 
+                           width="120" height="180"
+                           class="book-cover"
+                           col="0" />
+                    
+                    <StackLayout col="1" class="book-info">
+                        <Label text="{{ book.title }}" class="book-title" textWrap="true" />
+                        <Label text="{{ book.authors.join(', ') }}" class="book-author" textWrap="true" />
+                        <Label text="{{ book.publishedDate }}" class="book-date" />
+                        
+                        <!-- Rating -->
+                        <GridLayout columns="auto, auto" class="rating-container">
+                            <Label text="{{ '⭐'.repeat(Math.round(book.averageRating || 0)) }}" 
+                                   col="0"
+                                   class="rating-stars" />
+                            <Label text="{{ '(' + (book.ratingsCount || 0) + ')' }}" 
+                                   col="1"
+                                   class="rating-count" />
+                        </GridLayout>
+                    </StackLayout>
+                </GridLayout>
+
+                <!-- Action Buttons -->
+                <GridLayout columns="*, *" rows="auto" class="action-buttons">
+                    <Button text="{{ readingStatusText }}" 
+                            tap="{{ onChangeReadingStatus }}"
+                            col="0"
+                            class="status-button" />
+                    <Button text="Add to Collection" 
+                            tap="{{ onAddToCollection }}"
+                            col="1"
+                            class="collection-button" />
+                </GridLayout>
+
+                <!-- Reading Progress -->
+                <StackLayout class="progress-section" 
+                           visibility="{{ isReading ? 'visible' : 'collapsed' }}">
+                    <Label text="Reading Progress" class="section-title" />
+                    <GridLayout rows="auto, auto" columns="*, auto">
+                        <Progress value="{{ readingProgress }}" 
+                                 maxValue="100" 
+                                 class="reading-progress-bar"
+                                 row="0" colSpan="2" />
+                        <Label text="{{ readingProgress }}% Complete" 
+                               class="progress-text"
+                               row="1" col="0" />
+                        <Button text="Update Progress" 
+                                tap="{{ onUpdateProgress }}"
+                                class="progress-button"
+                                row="1" col="1" />
+                    </GridLayout>
+                </StackLayout>
+
+                <!-- Book Details -->
+                <StackLayout class="details-section">
+                    <Label text="About this Book" class="section-title" />
+                    <Label text="{{ book.description }}" 
+                           textWrap="true"
+                           class="book-description" />
+                </StackLayout>
+
+                <!-- Categories -->
+                <StackLayout class="categories-section">
+                    <Label text="Categories" class="section-title" />
+                    <WrapLayout class="categories-container">
+                        <Repeater items="{{ book.categories }}">
+                            <Repeater.itemTemplate>
+                                <Label text="{{ $value }}" class="category-tag" />
+                            </Repeater.itemTemplate>
+                        </Repeater>
+                    </WrapLayout>
+                </StackLayout>
+
+                <!-- Book Information -->
+                <StackLayout class="info-section">
+                    <Label text="Book Information" class="section-title" />
+                    <GridLayout rows="auto, auto, auto, auto" columns="auto, *" class="info-grid">
+                        <Label text="Publisher" class="info-label" row="0" col="0" />
+                        <Label text="{{ book.publisher }}" class="info-value" row="0" col="1" />
+                        
+                        <Label text="Pages" class="info-label" row="1" col="0" />
+                        <Label text="{{ book.pageCount }}" class="info-value" row="1" col="1" />
+                        
+                        <Label text="Language" class="info-label" row="2" col="0" />
+                        <Label text="{{ book.language }}" class="info-value" row="2" col="1" />
+                        
+                        <Label text="ISBN" class="info-label" row="3" col="0" />
+                        <Label text="{{ book.isbn.isbn13 || book.isbn.isbn10 }}" 
+                               class="info-value" 
+                               row="3" col="1" />
+                    </GridLayout>
+                </StackLayout>
+
+                <!-- External Links -->
+                <StackLayout class="links-section">
+                    <Button text="Preview Book" 
+                            tap="{{ onPreviewTap }}"
+                            class="preview-button"
+                            visibility="{{ book.previewLink ? 'visible' : 'collapsed' }}" />
+                    <Button text="More Information" 
+                            tap="{{ onInfoTap }}"
+                            class="info-button"
+                            visibility="{{ book.infoLink ? 'visible' : 'collapsed' }}" />
+                </StackLayout>
+            </StackLayout>
+        </StackLayout>
+    </ScrollView>
+</Page>
