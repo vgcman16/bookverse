@@ -72,6 +72,51 @@
     text-wrap: true;
 }
 
+/* Terms Page Styles */
+.terms-title {
+    font-size: 24;
+    font-weight: bold;
+    color: #333333;
+    margin-bottom: 10;
+    text-align: center;
+}
+
+.terms-date {
+    font-size: 14;
+    color: #666666;
+    margin-bottom: 20;
+    text-align: center;
+}
+
+.terms-section {
+    margin: 20 0;
+}
+
+.section-title {
+    font-size: 18;
+    font-weight: bold;
+    color: #333333;
+    margin-bottom: 10;
+}
+
+.section-content {
+    font-size: 16;
+    color: #666666;
+    line-height: 1.4;
+    margin-bottom: 10;
+}
+
+.list-container {
+    margin-left: 20;
+}
+
+.list-item {
+    font-size: 16;
+    color: #666666;
+    margin: 5 0;
+    line-height: 1.4;
+}
+
 .btn {
     height: 50;
     border-radius: 25;
@@ -179,6 +224,23 @@
 
     .remember-me Label,
     .terms-container Label {
+        color: #cccccc;
+    }
+
+    .terms-title {
+        color: #ffffff;
+    }
+
+    .terms-date {
+        color: #cccccc;
+    }
+
+    .section-title {
+        color: #ffffff;
+    }
+
+    .section-content,
+    .list-item {
         color: #cccccc;
     }
 

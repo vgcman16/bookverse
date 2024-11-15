@@ -1,0 +1,72 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="page">
+    <ActionBar title="Terms and Conditions" class="action-bar">
+        <NavigationButton text="Back" android.systemIcon="ic_menu_back" />
+    </ActionBar>
+
+    <ScrollView>
+        <StackLayout class="p-20">
+            <Label text="Terms and Conditions" class="terms-title" />
+            
+            <Label text="Last updated: {{ lastUpdated }}" class="terms-date" />
+
+            <StackLayout class="terms-section">
+                <Label text="1. Acceptance of Terms" class="section-title" />
+                <Label text="By accessing and using BookVerse, you agree to be bound by these Terms and Conditions. If you do not agree to these terms, please do not use the application." textWrap="true" class="section-content" />
+            </StackLayout>
+
+            <StackLayout class="terms-section">
+                <Label text="2. User Accounts" class="section-title" />
+                <Label text="You must create an account to use BookVerse. You are responsible for maintaining the confidentiality of your account credentials and for all activities under your account." textWrap="true" class="section-content" />
+                <Label text="You agree to:" textWrap="true" class="section-content" />
+                <StackLayout class="list-container">
+                    <Label text="• Provide accurate and complete information" textWrap="true" class="list-item" />
+                    <Label text="• Update your information as needed" textWrap="true" class="list-item" />
+                    <Label text="• Protect your account credentials" textWrap="true" class="list-item" />
+                    <Label text="• Notify us of any unauthorized use" textWrap="true" class="list-item" />
+                </StackLayout>
+            </StackLayout>
+
+            <StackLayout class="terms-section">
+                <Label text="3. User Content" class="section-title" />
+                <Label text="You retain ownership of content you post on BookVerse. By posting content, you grant us a non-exclusive license to use, modify, and display that content." textWrap="true" class="section-content" />
+            </StackLayout>
+
+            <StackLayout class="terms-section">
+                <Label text="4. Prohibited Activities" class="section-title" />
+                <Label text="You agree not to:" textWrap="true" class="section-content" />
+                <StackLayout class="list-container">
+                    <Label text="• Post inappropriate or harmful content" textWrap="true" class="list-item" />
+                    <Label text="• Violate intellectual property rights" textWrap="true" class="list-item" />
+                    <Label text="• Impersonate others" textWrap="true" class="list-item" />
+                    <Label text="• Engage in any illegal activities" textWrap="true" class="list-item" />
+                </StackLayout>
+            </StackLayout>
+
+            <StackLayout class="terms-section">
+                <Label text="5. Privacy" class="section-title" />
+                <Label text="Your use of BookVerse is also governed by our Privacy Policy. Please review it to understand how we collect and use your information." textWrap="true" class="section-content" />
+            </StackLayout>
+
+            <StackLayout class="terms-section">
+                <Label text="6. Changes to Terms" class="section-title" />
+                <Label text="We reserve the right to modify these terms at any time. We will notify users of significant changes via email or in-app notification." textWrap="true" class="section-content" />
+            </StackLayout>
+
+            <StackLayout class="terms-section">
+                <Label text="7. Termination" class="section-title" />
+                <Label text="We may suspend or terminate your account for violations of these terms or for any other reason at our discretion." textWrap="true" class="section-content" />
+            </StackLayout>
+
+            <StackLayout class="terms-section">
+                <Label text="8. Contact Us" class="section-title" />
+                <Label text="If you have questions about these terms, please contact us at support@bookverse.com" textWrap="true" class="section-content" />
+            </StackLayout>
+
+            <!-- Accept Button (only shown when opened from sign-up) -->
+            <Button text="Accept Terms" 
+                    tap="{{ onAcceptTerms }}" 
+                    class="btn btn-primary m-t-20"
+                    visibility="{{ showAcceptButton ? 'visible' : 'collapsed' }}" />
+        </StackLayout>
+    </ScrollView>
+</Page>
