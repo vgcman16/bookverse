@@ -57,10 +57,19 @@
     line-height: 1.4;
 }
 
-.remember-me Label {
+.remember-me Label,
+.terms-container Label {
     color: #666666;
     font-size: 14;
     vertical-align: center;
+}
+
+.terms-container {
+    margin: 10 0;
+}
+
+.terms-container Label {
+    text-wrap: true;
 }
 
 .btn {
@@ -168,7 +177,8 @@
         border-color: #3399ff;
     }
 
-    .remember-me Label {
+    .remember-me Label,
+    .terms-container Label {
         color: #cccccc;
     }
 

@@ -1,0 +1,93 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="page">
+    <ActionBar title="Sign Up" class="action-bar">
+        <NavigationButton text="Back" android.systemIcon="ic_menu_back" />
+    </ActionBar>
+
+    <ScrollView>
+        <StackLayout class="p-20">
+            <!-- Logo -->
+            <Image src="~/assets/images/logo.png" class="logo" stretch="aspectFit" />
+
+            <!-- Form -->
+            <StackLayout class="form">
+                <!-- Display Name -->
+                <StackLayout class="input-field">
+                    <Label text="Display Name" class="label" />
+                    <TextField text="{{ displayName }}" 
+                             hint="Enter your display name" 
+                             autocorrect="false" 
+                             class="input" />
+                    <Label text="{{ displayNameError }}" 
+                           class="error-message" 
+                           visibility="{{ displayNameError ? 'visible' : 'collapsed' }}" />
+                </StackLayout>
+
+                <!-- Email -->
+                <StackLayout class="input-field">
+                    <Label text="Email" class="label" />
+                    <TextField text="{{ email }}" 
+                             hint="Enter your email" 
+                             keyboardType="email" 
+                             autocorrect="false" 
+                             autocapitalizationType="none" 
+                             class="input" />
+                    <Label text="{{ emailError }}" 
+                           class="error-message" 
+                           visibility="{{ emailError ? 'visible' : 'collapsed' }}" />
+                </StackLayout>
+
+                <!-- Password -->
+                <StackLayout class="input-field">
+                    <Label text="Password" class="label" />
+                    <TextField text="{{ password }}" 
+                             hint="Enter your password" 
+                             secure="true" 
+                             class="input" />
+                    <Label text="{{ passwordError }}" 
+                           class="error-message" 
+                           visibility="{{ passwordError ? 'visible' : 'collapsed' }}" />
+                </StackLayout>
+
+                <!-- Confirm Password -->
+                <StackLayout class="input-field">
+                    <Label text="Confirm Password" class="label" />
+                    <TextField text="{{ confirmPassword }}" 
+                             hint="Confirm your password" 
+                             secure="true" 
+                             class="input" />
+                    <Label text="{{ confirmPasswordError }}" 
+                           class="error-message" 
+                           visibility="{{ confirmPasswordError ? 'visible' : 'collapsed' }}" />
+                </StackLayout>
+
+                <!-- Terms and Conditions -->
+                <GridLayout columns="auto, *" class="terms-container m-y-10">
+                    <Switch checked="{{ acceptTerms }}" col="0" />
+                    <Label text="I accept the Terms and Conditions" col="1" class="m-l-10" textWrap="true" />
+                </GridLayout>
+
+                <!-- Error Message -->
+                <Label text="{{ errorMessage }}" 
+                       class="error-message text-center" 
+                       textWrap="true"
+                       visibility="{{ errorMessage ? 'visible' : 'collapsed' }}" />
+
+                <!-- Sign Up Button -->
+                <Button text="Sign Up" 
+                        tap="{{ onSignUp }}" 
+                        class="btn btn-primary" 
+                        isEnabled="{{ !isLoading }}" />
+
+                <!-- Loading Indicator -->
+                <ActivityIndicator busy="{{ isLoading }}" 
+                                 visibility="{{ isLoading ? 'visible' : 'collapsed' }}" 
+                                 class="activity-indicator" />
+
+                <!-- Back to Login -->
+                <Label text="Already have an account? Login" 
+                       tap="{{ onBackToLogin }}" 
+                       class="link text-center m-t-20" />
+            </StackLayout>
+        </StackLayout>
+    </ScrollView>
+</Page>
